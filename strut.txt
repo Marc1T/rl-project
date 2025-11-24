@@ -1,0 +1,36 @@
+pdp_rl_project/
+├── agents/
+│   ├── __init__.py
+│   ├── baseline_strategies.py  
+│   ├── ppo_trainer.py          
+│   └── rl_utils.py             
+├── components/
+│   ├── __init__.py
+│   ├── action_validators.py    
+│   ├── constraints.py          
+│   ├── cost_calculators.py     
+│   ├── demand_generators.py   
+│   ├── normalizers.py
+│   ├── observation_builders.py
+│   └── reward_calculators.py   
+├── config/
+│   ├── __init__.py
+│   ├── base_config.py
+│   ├── environment_configs.py
+│   └── training_configs.py
+├── environments/
+│   ├── __init__.py
+│   ├── base_pdp_env.py         
+│   ├── env_registry.py
+│   └── strategic_pdp_env.py
+├── scripts/
+│   ├── __init__.py
+│   ├── compare_strategies.py   
+│   ├── evaluate.py             
+│   ├── test_env.py            
+│   ├── train.py               
+│   └── visualize_metrics.py 
+├── tests/
+│   ├── __init__.py
+│   └── test_components.py      
+└── requirements.txt           
