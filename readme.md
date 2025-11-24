@@ -1,4 +1,4 @@
-# 🚀 Guide de Démarrage Rapide - Environnement PDP Corrigé
+# 🚀 Guide de Démarrage Rapide - Environnement PDP
 
 ## 📥 Installation
 
@@ -28,11 +28,6 @@ python scripts/test_env_diagnostic.py
 4/4 tests réussis
 🎉 Tous les tests sont passés! L'environnement est prêt.
 ```
-
-**Si un test échoue:**
-- Vérifiez que vous avez bien remplacé les fichiers corrigés
-- Consultez les messages d'erreur détaillés
-
 ---
 
 ## 🏋️ Étape 2: Entraînement Initial (30-60 min)
@@ -77,21 +72,7 @@ tensorboard --logdir ./logs/tensorboard/
 
 Ouvrez votre navigateur: `http://localhost:6006`
 
-**Métriques à surveiller:**
-
-1. **ep_rew_mean** (Reward moyen par épisode)
-   - ❌ Mauvais: Reste constant ou diminue
-   - ✅ Bon: Augmente progressivement
-
-2. **ep_len_mean** (Longueur moyenne des épisodes)
-   - Devrait être constant = horizon (12)
-
-3. **value_loss** (Perte de la value function)
-   - ❌ Mauvais: Explose ou reste très élevé
-   - ✅ Bon: Diminue progressivement
-
-4. **policy_loss** (Perte de la policy)
-   - Devrait rester stable et faible
+**Surveiller les métriques :**
 
 ---
 
@@ -116,7 +97,7 @@ python scripts/evaluate.py \
 ```
 
 **Interprétation:**
-- **Reward:** Plus élevé = meilleur (moins négatif)
+- **Reward:** Plus élevé = meilleur
 - **Service level > 0.90:** ✅ Bon
 - **Stock final 50-150:** ✅ Équilibré
 
@@ -183,18 +164,7 @@ COMPARAISON DES STRATÉGIES
 2. Augmenter `shortage_cost` dans `base_config.py`
 3. Vérifier que les demandes ne sont pas trop élevées
 
-### Problème 4: Stock négatif permanent
 
-**Symptômes:**
-- Stock toujours < 0
-- Coût de shortage très élevé
-
-**Solutions:**
-1. Augmenter `initial_stock` dans la config
-2. Vérifier que `allow_backorders=True`
-3. Ajuster les capacités de production
-
----
 
 ## 📁 Structure des Résultats
 
@@ -275,37 +245,4 @@ python scripts/train.py \
 - **Stable-Baselines3 Docs:** https://stable-baselines3.readthedocs.io/
 - **PPO Paper:** https://arxiv.org/abs/1707.06347
 - **RL Debugging:** https://andyljones.com/posts/rl-debugging.html
-
----
-
-## ✅ Checklist de Vérification
-
-Avant de signaler un problème:
-
-- [ ] J'ai lancé `test_env_diagnostic.py` et tous les tests passent
-- [ ] J'ai vérifié TensorBoard et les métriques sont logiques
-- [ ] J'ai comparé avec les baselines
-- [ ] J'ai essayé avec différents seeds
-- [ ] J'ai vérifié que VecNormalize est bien sauvegardé/chargé
-
----
-
-## 🎉 Prochaines Étapes
-
-Une fois que votre modèle fonctionne bien:
-
-1. **Expérimentation:**
-   - Tester différents poids de reward
-   - Essayer différentes architectures de réseau
-   - Ajouter des contraintes supplémentaires
-
-2. **Validation:**
-   - Tester sur des scénarios de demande variés
-   - Analyser la robustesse aux perturbations
-   - Comparer avec des données réelles
-
-3. **Déploiement:**
-   - Créer une interface de visualisation
-   - Intégrer avec un système de gestion de production
-   - Mettre en place un monitoring en production
 
