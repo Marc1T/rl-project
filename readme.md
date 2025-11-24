@@ -129,43 +129,6 @@ COMPARAISON DES STRATÉGIES
 
 ---
 
-## 🐛 Troubleshooting
-
-### Problème 1: Le reward ne s'améliore pas
-
-**Symptômes:**
-- Le reward moyen stagne
-- Le reward oscille sans converger
-
-**Solutions:**
-1. Vérifier que VecNormalize est bien utilisé
-2. Augmenter le nombre de timesteps (100k → 200k)
-3. Réduire le learning rate: `learning_rate: float = 1e-4`
-4. Essayer l'environnement `base` au lieu de `strategic`
-
-### Problème 2: Les rewards explosent
-
-**Symptômes:**
-- Rewards > 1000 ou < -10000
-- Value loss explose
-
-**Solutions:**
-1. Vérifier la normalisation dans `normalizers.py`
-2. Augmenter `clip_reward` dans VecNormalize
-3. Réduire les poids des rewards dans `environment_configs.py`
-
-### Problème 3: Service level toujours faible
-
-**Symptômes:**
-- Service level < 0.80 après entraînement
-
-**Solutions:**
-1. Augmenter `service_bonus` weight dans la config
-2. Augmenter `shortage_cost` dans `base_config.py`
-3. Vérifier que les demandes ne sont pas trop élevées
-
-
-
 ## 📁 Structure des Résultats
 
 Après l'entraînement, vous devriez avoir:
