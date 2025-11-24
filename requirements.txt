@@ -1,0 +1,7 @@
+gymnasium>=0.29.1
+stable-baselines3>=2.2.1
+torch>=2.1.0
+numpy>=1.26.0
+matplotlib>=3.8.0 # Pour visualize_metrics.py
+scipy>=1.11.0 # Utile pour certaines fonctions mathématiques
+pandas>=2.1.0 # Utile pour la gestion des données de demande et de métriques

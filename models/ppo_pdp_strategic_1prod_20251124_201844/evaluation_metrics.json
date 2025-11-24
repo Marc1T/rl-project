@@ -1,0 +1,1702 @@
+[
+    [
+        {
+            "period": 0,
+            "reward": 1.708078918295957,
+            "total_production": 51.663703083992004,
+            "inventory_level": [
+                27.68577492237091
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 688.2740426063538,
+                "inventory_cost": 55.37154984474182,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.3116612507504632,
+            "total_production": 105.66370594501495,
+            "inventory_level": [
+                31.715195894241333
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1423.2740807533264,
+                "inventory_cost": 63.430391788482666,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.3717753808843327,
+            "total_production": 128.36038625240326,
+            "inventory_level": [
+                68.93987047672272
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1592.1517437696457,
+                "inventory_cost": 137.87974095344543,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.4521757695596629,
+            "total_production": 124.61905032396317,
+            "inventory_level": [
+                108.82330983877182
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1456.325612962246,
+                "inventory_cost": 217.64661967754364,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.581744311550619,
+            "total_production": 93.78764295578003,
+            "inventory_level": [
+                139.12205737829208
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 961.956136226654,
+                "inventory_cost": 278.24411475658417,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.59461940752738,
+            "total_production": 100.0,
+            "inventory_level": [
+                175.63432163000107
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1000.0,
+                "inventory_cost": 351.26864326000214,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.6068858021008812,
+            "total_production": 70.1524862991646,
+            "inventory_level": [
+                186.9987944709137
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 702.2873040242121,
+                "inventory_cost": 373.9975889418274,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.7050168866635633,
+            "total_production": 48.68631845712662,
+            "inventory_level": [
+                138.10865876544267
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 530.2947959303856,
+                "inventory_cost": 276.21731753088534,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.6337736962748994,
+            "total_production": 71.8595786318183,
+            "inventory_level": [
+                125.11471414286643
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 727.8936890140176,
+                "inventory_cost": 250.22942828573287,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.7232504458782798,
+            "total_production": 50.85957672446966,
+            "inventory_level": [
+                85.98681070376188
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 562.8936699405313,
+                "inventory_cost": 171.97362140752375,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.4876045637277944,
+            "total_production": 77.23413541167974,
+            "inventory_level": [
+                106.23288993258029
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 871.6392568126321,
+                "inventory_cost": 212.46577986516058,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.700197494057134,
+            "total_production": 38.23413350433111,
+            "inventory_level": [
+                41.91135174501687
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 436.63923773914576,
+                "inventory_cost": 83.82270349003375,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.6903347977873873,
+            "total_production": 54.00000286102295,
+            "inventory_level": [
+                26.10864543914795
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 735.0000381469727,
+                "inventory_cost": 52.2172908782959,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.27812621983025,
+            "total_production": 94.30631285905838,
+            "inventory_level": [
+                26.726512253284454
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1264.5946833491325,
+                "inventory_cost": 53.45302450656891,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.4424930374021694,
+            "total_production": 118.3063138127327,
+            "inventory_level": [
+                79.44848310947418
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1399.5946833491325,
+                "inventory_cost": 158.89696621894836,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.434123440889809,
+            "total_production": 128.02728489041328,
+            "inventory_level": [
+                126.79251757264137
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1474.5026230812073,
+                "inventory_cost": 253.58503514528275,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.5984091786883816,
+            "total_production": 78.20861303806305,
+            "inventory_level": [
+                120.56523278355598
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 823.1292051076889,
+                "inventory_cost": 241.13046556711197,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.6732282569993926,
+            "total_production": 61.247667372226715,
+            "inventory_level": [
+                123.58328208327293
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 631.5544351935387,
+                "inventory_cost": 247.16656416654587,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.7469473240939093,
+            "total_production": 50.0,
+            "inventory_level": [
+                88.42112693190575
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 500.0,
+                "inventory_cost": 176.8422538638115,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.546245909221403,
+            "total_production": 83.21401719748974,
+            "inventory_level": [
+                107.44998635351658
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 848.2102484256029,
+                "inventory_cost": 214.89997270703316,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.430390992644814,
+            "total_production": 112.2140152901411,
+            "inventory_level": [
+                160.54152697324753
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1183.2102293521166,
+                "inventory_cost": 321.08305394649506,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.5527462862076564,
+            "total_production": 83.6146514415741,
+            "inventory_level": [
+                142.60966962575912
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 904.2197811603546,
+                "inventory_cost": 285.21933925151825,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.7613877044083626,
+            "total_production": 44.614649534225464,
+            "inventory_level": [
+                84.87398499250412
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 469.2197620868683,
+                "inventory_cost": 169.74796998500824,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.8549683742973508,
+            "total_production": 11.084581911563873,
+            "inventory_level": [
+                1.1554968357086182
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 110.84581911563873,
+                "inventory_cost": 2.3109936714172363,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.6929452409000114,
+            "total_production": 54.00000286102295,
+            "inventory_level": [
+                21.757906913757324
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 735.0000381469727,
+                "inventory_cost": 43.51581382751465,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.4208361091756245,
+            "total_production": 90.81778746843338,
+            "inventory_level": [
+                47.70267802476883
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1126.355711221695,
+                "inventory_cost": 95.40535604953766,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.34474424699737,
+            "total_production": 130.6852464079857,
+            "inventory_level": [
+                75.84786248207092
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1649.367590546608,
+                "inventory_cost": 151.69572496414185,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.1604291683009662,
+            "total_production": 150.4326572418213,
+            "inventory_level": [
+                133.0741446018219
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1899.315864443779,
+                "inventory_cost": 266.1482892036438,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.3192271503580495,
+            "total_production": 126.43265628814697,
+            "inventory_level": [
+                158.41085362434387
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1464.3158453702927,
+                "inventory_cost": 316.82170724868774,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.4787993063655076,
+            "total_production": 103.86745607852936,
+            "inventory_level": [
+                163.3265961408615
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1058.0118411779404,
+                "inventory_cost": 326.653192281723,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.6134479045054477,
+            "total_production": 72.6326745301485,
+            "inventory_level": [
+                151.2600748091936
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 739.4901274889708,
+                "inventory_cost": 302.5201496183872,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.7853939499885136,
+            "total_production": 39.999996185302734,
+            "inventory_level": [
+                91.010109141469
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 399.99996185302734,
+                "inventory_cost": 182.020218282938,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.5001425269102153,
+            "total_production": 78.99999809265137,
+            "inventory_level": [
+                109.76246853172779
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 834.9999809265137,
+                "inventory_cost": 219.52493706345558,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.6191594898485806,
+            "total_production": 69.17985606193542,
+            "inventory_level": [
+                113.5351438075304
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 781.7985606193542,
+                "inventory_cost": 227.0702876150608,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.7353120635086732,
+            "total_production": 41.48925828933716,
+            "inventory_level": [
+                96.85349221527576
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 516.4396035671234,
+                "inventory_cost": 193.70698443055153,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.810215348884841,
+            "total_production": 11.309404134750366,
+            "inventory_level": [
+                36.5470439940691
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 169.6410620212555,
+                "inventory_cost": 73.0940879881382,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.8063590276747201,
+            "total_production": 39.00000190734863,
+            "inventory_level": [
+                32.734941482543945
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 435.0000190734863,
+                "inventory_cost": 65.46988296508789,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.4136443003749664,
+            "total_production": 93.00000476837158,
+            "inventory_level": [
+                30.592795372009277
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1170.000057220459,
+                "inventory_cost": 61.185590744018555,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.135401772932213,
+            "total_production": 147.00000762939453,
+            "inventory_level": [
+                87.663649559021
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1905.0000953674316,
+                "inventory_cost": 175.327299118042,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.3941972113991623,
+            "total_production": 133.00000095367432,
+            "inventory_level": [
+                129.67130279541016
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1570.0000190734863,
+                "inventory_cost": 259.3426055908203,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.458609802787484,
+            "total_production": 109.0,
+            "inventory_level": [
+                145.65032958984375
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1135.0,
+                "inventory_cost": 291.3006591796875,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.5652719704230063,
+            "total_production": 94.1457211971283,
+            "inventory_level": [
+                180.24190878868103
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 941.457211971283,
+                "inventory_cost": 360.48381757736206,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.6407083576934287,
+            "total_production": 64.14571928977966,
+            "inventory_level": [
+                171.18127584457397
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 641.4571928977966,
+                "inventory_cost": 342.36255168914795,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.6940651193505798,
+            "total_production": 70.13776034116745,
+            "inventory_level": [
+                179.75732201337814
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 745.2012196183205,
+                "inventory_cost": 359.5146440267563,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.7062870227247455,
+            "total_production": 31.373035192489624,
+            "inventory_level": [
+                113.70139449834824
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 313.73035192489624,
+                "inventory_cost": 227.40278899669647,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.6013186229175949,
+            "total_production": 58.156995326280594,
+            "inventory_level": [
+                85.94007775187492
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 617.7933268249035,
+                "inventory_cost": 171.88015550374985,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.6116790039273385,
+            "total_production": 86.39075258374214,
+            "inventory_level": [
+                100.44772791862488
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 945.130899399519,
+                "inventory_cost": 200.89545583724976,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.7426750411639926,
+            "total_production": 47.39075067639351,
+            "inventory_level": [
+                88.78767827153206
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 510.13088032603264,
+                "inventory_cost": 177.57535654306412,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.7267714632084379,
+            "total_production": 49.986424654722214,
+            "inventory_level": [
+                18.895245760679245
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 654.728474020958,
+                "inventory_cost": 37.79049152135849,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.3162927753444302,
+            "total_production": 103.98642751574516,
+            "inventory_level": [
+                46.35970062017441
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1389.7285121679306,
+                "inventory_cost": 92.71940124034882,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.4158611428999355,
+            "total_production": 118.44827115535736,
+            "inventory_level": [
+                107.58785229921341
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1423.9653658866882,
+                "inventory_cost": 215.17570459842682,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.6578994692289528,
+            "total_production": 64.44826829433441,
+            "inventory_level": [
+                110.85733336210251
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 688.9653277397156,
+                "inventory_cost": 221.71466672420502,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.45768547865508,
+            "total_production": 97.01595371961594,
+            "inventory_level": [
+                150.36468493938446
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1005.2392771840096,
+                "inventory_cost": 300.7293698787689,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.6017098089194253,
+            "total_production": 100.0,
+            "inventory_level": [
+                163.81698596477509
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1000.0,
+                "inventory_cost": 327.63397192955017,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.598400129666193,
+            "total_production": 73.63077703118324,
+            "inventory_level": [
+                166.35867455601692
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 754.4616650044918,
+                "inventory_cost": 332.71734911203384,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.5705890335883608,
+            "total_production": 88.60027313232422,
+            "inventory_level": [
+                174.54755547642708
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 936.7060840129852,
+                "inventory_cost": 349.09511095285416,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.7245667948437333,
+            "total_production": 49.600271224975586,
+            "inventory_level": [
+                124.58463242650032
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 501.7060649394989,
+                "inventory_cost": 249.16926485300064,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.4881862393050163,
+            "total_production": 88.60027313232422,
+            "inventory_level": [
+                145.2188792526722
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 936.7060840129852,
+                "inventory_cost": 290.4377585053444,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.6711155045877555,
+            "total_production": 58.19566625356674,
+            "inventory_level": [
+                127.71616598963737
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 630.6369903683662,
+                "inventory_cost": 255.43233197927475,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.788957987353979,
+            "total_production": 19.19566434621811,
+            "inventory_level": [
+                54.64537373185158
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 195.6369712948799,
+                "inventory_cost": 109.29074746370316,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.7004542588368383,
+            "total_production": 54.00000286102295,
+            "inventory_level": [
+                9.242877006530762
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 735.0000381469727,
+                "inventory_cost": 18.485754013061523,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.2876746332881088,
+            "total_production": 94.87682944536209,
+            "inventory_level": [
+                5.107323944568634
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1273.1524321436882,
+                "inventory_cost": 10.214647889137268,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 0.9971070196574433,
+            "total_production": 148.87683230638504,
+            "inventory_level": [
+                82.71998846530914
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 2008.1524702906609,
+                "inventory_cost": 165.4399769306183,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.2891324437978329,
+            "total_production": 142.12197822332382,
+            "inventory_level": [
+                163.55947309732437
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1781.8296828866005,
+                "inventory_cost": 327.11894619464874,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.4889617103703416,
+            "total_production": 94.96156138181686,
+            "inventory_level": [
+                191.58014702796936
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1115.2255049347878,
+                "inventory_cost": 383.1602940559387,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.5977805374793401,
+            "total_production": 80.40112569928169,
+            "inventory_level": [
+                195.48009780049324
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 837.3285107314587,
+                "inventory_cost": 390.9601956009865,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.6974602101997003,
+            "total_production": 51.88038744032383,
+            "inventory_level": [
+                152.09577576816082
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 528.2058116048574,
+                "inventory_cost": 304.19155153632164,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.809644484282813,
+            "total_production": 55.97545504570007,
+            "inventory_level": [
+                110.75615970790386
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 559.7545504570007,
+                "inventory_cost": 221.51231941580772,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.4624594239312156,
+            "total_production": 94.9754569530487,
+            "inventory_level": [
+                149.39791457355022
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 994.7545695304871,
+                "inventory_cost": 298.79582914710045,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.676181542014049,
+            "total_production": 59.76365774869919,
+            "inventory_level": [
+                128.6457031816244
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 616.5775910019875,
+                "inventory_cost": 257.2914063632488,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.7957340214119561,
+            "total_production": 34.03801518678665,
+            "inventory_level": [
+                86.64798991382122
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 380.6929621100426,
+                "inventory_cost": 173.29597982764244,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.8880079132170196,
+            "total_production": 0.0,
+            "inventory_level": [
+                19.986811324954033
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 0.0,
+                "inventory_cost": 39.973622649908066,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.8144033956476329,
+            "total_production": 39.00000190734863,
+            "inventory_level": [
+                19.327661514282227
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 435.0000190734863,
+                "inventory_cost": 38.65532302856445,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.3992657214403703,
+            "total_production": 93.00000476837158,
+            "inventory_level": [
+                54.55709362030029
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1170.000057220459,
+                "inventory_cost": 109.11418724060059,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.2992479125020224,
+            "total_production": 134.7232260107994,
+            "inventory_level": [
+                104.02123302221298
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1720.8483710885048,
+                "inventory_cost": 208.04246604442596,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.3588911673758042,
+            "total_production": 120.7232193350792,
+            "inventory_level": [
+                144.61585891246796
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1385.8482947945595,
+                "inventory_cost": 289.2317178249359,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.6263130827587502,
+            "total_production": 69.99999809265137,
+            "inventory_level": [
+                156.14487540721893
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 699.9999809265137,
+                "inventory_cost": 312.28975081443787,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.6658275120023778,
+            "total_production": 61.32838726043701,
+            "inventory_level": [
+                148.09823215007782
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 613.2838726043701,
+                "inventory_cost": 296.19646430015564,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.740899119135558,
+            "total_production": 50.0,
+            "inventory_level": [
+                98.50146853923798
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 500.0,
+                "inventory_cost": 197.00293707847595,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.563398492508298,
+            "total_production": 80.00000190734863,
+            "inventory_level": [
+                111.00250041484833
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 800.0000190734863,
+                "inventory_cost": 222.00500082969666,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.4517714716433137,
+            "total_production": 109.0,
+            "inventory_level": [
+                157.0475481748581
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1135.0,
+                "inventory_cost": 314.0950963497162,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.538519797357461,
+            "total_production": 84.0830169916153,
+            "inventory_level": [
+                161.63682889938354
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 911.2452644109726,
+                "inventory_cost": 323.2736577987671,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.74745672668439,
+            "total_production": 45.08301508426666,
+            "inventory_level": [
+                103.40862572193146
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 476.24524533748627,
+                "inventory_cost": 206.81725144386292,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.832526042361976,
+            "total_production": 9.999994277954102,
+            "inventory_level": [
+                45.78996765613556
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 99.99994277954102,
+                "inventory_cost": 91.57993531227112,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.8073743154544666,
+            "total_production": 39.00000190734863,
+            "inventory_level": [
+                31.042795181274414
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 435.0000190734863,
+                "inventory_cost": 62.08559036254883,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.4081920146138172,
+            "total_production": 93.00000476837158,
+            "inventory_level": [
+                39.679938316345215
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1170.000057220459,
+                "inventory_cost": 79.35987663269043,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.341194342308747,
+            "total_production": 130.0169022679329,
+            "inventory_level": [
+                81.17375403642654
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1650.253514945507,
+                "inventory_cost": 162.3475080728531,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.5143600727669326,
+            "total_production": 99.77817636728287,
+            "inventory_level": [
+                124.15571534633636
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1152.8662464022636,
+                "inventory_cost": 248.31143069267273,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.5836177807547722,
+            "total_production": 104.58137437701225,
+            "inventory_level": [
+                148.15662249922752
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1068.7206156551838,
+                "inventory_cost": 296.31324499845505,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.6662366109857678,
+            "total_production": 94.56358551979065,
+            "inventory_level": [
+                175.8484123647213
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 945.6358551979065,
+                "inventory_cost": 351.6968247294426,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.6496794436560513,
+            "total_production": 64.56358361244202,
+            "inventory_level": [
+                153.4437037408352
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 645.6358361244202,
+                "inventory_cost": 306.8874074816704,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.6621754817012915,
+            "total_production": 72.69131541252136,
+            "inventory_level": [
+                161.7654283940792
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 726.9131541252136,
+                "inventory_cost": 323.5308567881584,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.7510807841346365,
+            "total_production": 44.64325308799744,
+            "inventory_level": [
+                117.24367293715477
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 446.43253087997437,
+                "inventory_cost": 234.48734587430954,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.5216327997617012,
+            "total_production": 83.64325499534607,
+            "inventory_level": [
+                126.32363447546959
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 881.4325499534607,
+                "inventory_cost": 252.64726895093918,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.7794246812582397,
+            "total_production": 44.64325308799744,
+            "inventory_level": [
+                70.0038443505764
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 446.43253087997437,
+                "inventory_cost": 140.0076887011528,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.8281993413629898,
+            "total_production": 14.643251180648804,
+            "inventory_level": [
+                22.046089977025986
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 146.43251180648804,
+                "inventory_cost": 44.09217995405197,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.7031320252526174,
+            "total_production": 54.00000286102295,
+            "inventory_level": [
+                4.779932975769043
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 735.0000381469727,
+                "inventory_cost": 9.559865951538086,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.318940318283353,
+            "total_production": 104.54924976825714,
+            "inventory_level": [
+                22.94031250476837
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1418.238736987114,
+                "inventory_cost": 45.88062500953674,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.2564261149951197,
+            "total_production": 142.37352108955383,
+            "inventory_level": [
+                93.04040372371674
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1844.3741089105606,
+                "inventory_cost": 186.08080744743347,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.4014056330633444,
+            "total_production": 129.23012667894363,
+            "inventory_level": [
+                149.50846832990646
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1522.2232165932655,
+                "inventory_cost": 299.0169366598129,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.4403342547350904,
+            "total_production": 109.23631253838539,
+            "inventory_level": [
+                167.89890989661217
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1147.3159997165203,
+                "inventory_cost": 335.79781979322433,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.588468327667241,
+            "total_production": 101.54986418783665,
+            "inventory_level": [
+                170.38747952878475
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1023.2479628175497,
+                "inventory_cost": 340.7749590575695,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.6349156094953476,
+            "total_production": 69.99999809265137,
+            "inventory_level": [
+                141.80733083188534
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 699.9999809265137,
+                "inventory_cost": 283.6146616637707,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.7829906751100655,
+            "total_production": 73.4750747680664,
+            "inventory_level": [
+                121.84837697446346
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 734.7507476806641,
+                "inventory_cost": 243.69675394892693,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.681118362802264,
+            "total_production": 64.75285291671753,
+            "inventory_level": [
+                99.78370974957943
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 647.5285291671753,
+                "inventory_cost": 199.56741949915886,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.4308898739850058,
+            "total_production": 103.75285482406616,
+            "inventory_level": [
+                143.4978453963995
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1082.5285482406616,
+                "inventory_cost": 286.995690792799,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.5397452083034393,
+            "total_production": 82.10859060287476,
+            "inventory_level": [
+                161.84825728833675
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 907.8645944595337,
+                "inventory_cost": 323.6965145766735,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.7473584224932566,
+            "total_production": 43.10858869552612,
+            "inventory_level": [
+                105.82624600827694
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 472.86457538604736,
+                "inventory_cost": 211.65249201655388,
+                "shortage_cost": 0.0
+            }
+        }
+    ],
+    [
+        {
+            "period": 0,
+            "reward": 1.686571495178846,
+            "total_production": 54.00000286102295,
+            "inventory_level": [
+                32.38081645965576
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 735.0000381469727,
+                "inventory_cost": 64.76163291931152,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 1,
+            "reward": 1.2828704300376006,
+            "total_production": 108.0000057220459,
+            "inventory_level": [
+                48.54923343658447
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1470.0000762939453,
+                "inventory_cost": 97.09846687316895,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 2,
+            "reward": 1.1847879529783636,
+            "total_production": 151.44092547893524,
+            "inventory_level": [
+                112.80777823925018
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1993.8184523582458,
+                "inventory_cost": 225.61555647850037,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 3,
+            "reward": 1.3443810676024666,
+            "total_production": 137.44091880321503,
+            "inventory_level": [
+                153.48597121238708
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1658.8183760643005,
+                "inventory_cost": 306.97194242477417,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 4,
+            "reward": 1.4028557775985253,
+            "total_production": 113.44091784954071,
+            "inventory_level": [
+                179.36146700382233
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 1223.8183569908142,
+                "inventory_cost": 358.72293400764465,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 5,
+            "reward": 1.4945625577497381,
+            "total_production": 97.34518527984619,
+            "inventory_level": [
+                193.427836060524
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 973.4518527984619,
+                "inventory_cost": 386.855672121048,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 6,
+            "reward": 1.6104532877287572,
+            "total_production": 67.34518337249756,
+            "inventory_level": [
+                200.2766319513321
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 673.4518337249756,
+                "inventory_cost": 400.5532639026642,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 7,
+            "reward": 1.6882145534056958,
+            "total_production": 51.26297473907471,
+            "inventory_level": [
+                177.88924658298492
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 512.6297473907471,
+                "inventory_cost": 355.77849316596985,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 8,
+            "reward": 1.5106945879799318,
+            "total_production": 81.26297664642334,
+            "inventory_level": [
+                190.42250978946686
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 812.6297664642334,
+                "inventory_cost": 380.8450195789337,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 9,
+            "reward": 1.6748380591127463,
+            "total_production": 53.645649403333664,
+            "inventory_level": [
+                176.3566571176052
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 548.3698673546314,
+                "inventory_cost": 352.7133142352104,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 10,
+            "reward": 1.7579990343977439,
+            "total_production": 21.262972831726074,
+            "inventory_level": [
+                94.91512402892113
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 212.62972831726074,
+                "inventory_cost": 189.83024805784225,
+                "shortage_cost": 0.0
+            }
+        },
+        {
+            "period": 11,
+            "reward": 1.8879721398891087,
+            "total_production": 0.0,
+            "inventory_level": [
+                20.04643353819847
+            ],
+            "demand_fulfillment": 1.0,
+            "costs": {
+                "production_cost": 0.0,
+                "inventory_cost": 40.09286707639694,
+                "shortage_cost": 0.0
+            }
+        }
+    ]
+]
