@@ -1,10 +1,10 @@
 site_name: RLPlanif
 site_description: Optimisation du Plan Directeur de Production avec Apprentissage par Renforcement
-site_author: NANKOULI
-site_url: https://rlplanif.readthedocs.io/
+site_author: NANKOULI Marc Thierry
+site_url: https://rl-project.readthedocs.io/
 
-repo_name: RLPlanif
-repo_url: https://github.com/NANKOULI/rlplanif
+repo_name: rl-project
+repo_url: https://github.com/Marc1T/rl-project
 
 theme:
   name: material

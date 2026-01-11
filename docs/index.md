@@ -9,6 +9,10 @@
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-0.29+-orange.svg)](https://gymnasium.farama.org/)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
+**Auteur:** NANKOULI Marc Thierry  
+**Encadrant:** Prof. TAWFIK Masrour  
+**Institution:** ENSAM Meknès - Filière IATD-SI
+
 </div>
 
 ---
@@ -16,6 +20,8 @@
 ## 🎯 Qu'est-ce que RLPlanif?
 
 **RLPlanif** est un système avancé d'aide à la décision pour la gestion du **Plan Directeur de Production (PDP)**. Il utilise l'algorithme **PPO (Proximal Policy Optimization)** pour apprendre automatiquement les meilleures stratégies de production face à une demande variable.
+
+Ce projet est réalisé dans le cadre du module **Reinforcement Learning** à l'ENSAM Meknès.
 
 Le système optimise trois leviers de production :
 
@@ -127,14 +133,16 @@ Les contributions sont les bienvenues ! Voir le [guide de contribution](contribu
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT. Voir [LICENSE](https://github.com/NANKOULI/rlplanif/blob/main/LICENSE) pour plus de détails.
+Ce projet est sous licence MIT. Voir [LICENSE](https://github.com/Marc1T/rl-project/blob/main/LICENSE) pour plus de détails.
 
 ---
 
 <div align="center">
 
-**Made with ❤️ for Production Planning**
+**Projet réalisé par NANKOULI Marc Thierry**  
+**Sous la direction de Prof. TAWFIK Masrour**  
+**ENSAM Meknès - IATD-SI - 2025/2026**
 
-[GitHub](https://github.com/NANKOULI/rlplanif) · [Documentation](https://rlplanif.readthedocs.io/) · [Issues](https://github.com/NANKOULI/rlplanif/issues)
+[GitHub](https://github.com/Marc1T/rl-project) · [Documentation](https://rl-project.readthedocs.io/) · [Issues](https://github.com/Marc1T/rl-project/issues)
 
 </div>
