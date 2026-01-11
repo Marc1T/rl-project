@@ -5,3 +5,23 @@ numpy>=1.26.0
 matplotlib>=3.8.0 # Pour visualize_metrics.py
 scipy>=1.11.0 # Utile pour certaines fonctions mathématiques
 pandas>=2.1.0 # Utile pour la gestion des données de demande et de métriques
+
+
+# Requirements pour l'interface Streamlit
+
+# Visualization
+streamlit>=1.28.0
+plotly>=5.14.0
+seaborn>=0.12.0
+
+# Data handling
+openpyxl>=3.0.0
+xlrd>=2.0.0
+
+# Utils
+python-dateutil>=2.8.0
+tqdm>=4.65.0
+
+# Optional (for better performance)
+tensorboard>=2.13.0
+wandb>=0.15.0
