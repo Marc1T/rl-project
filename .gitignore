@@ -137,3 +137,5 @@ config.local.yaml
 # Streamlit
 # ===========================
 .streamlit/secrets.toml
+
+RapportPresentation/

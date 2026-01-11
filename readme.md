@@ -1,24 +1,97 @@
-# 🚀 Guide de Démarrage Rapide - Environnement PDP
+# 🏭 RLPlanif - Plan Directeur de Production Intelligent
+
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
+![Stable-Baselines3](https://img.shields.io/badge/Stable--Baselines3-2.2+-green.svg)
+![Gymnasium](https://img.shields.io/badge/Gymnasium-0.29+-orange.svg)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)
+![License](https://img.shields.io/badge/License-MIT-purple.svg)
+
+**Optimisation du Plan Directeur de Production avec l'Apprentissage par Renforcement**
+
+[Documentation](https://rl-project.readthedocs.io/) · [Démo](#-interface-streamlit) · [Installation](#-installation)
+
+</div>
+
+---
+
+## 👨‍🎓 Informations du Projet
+
+| | |
+|---|---|
+| **Auteur** | NANKOULI Marc Thierry |
+| **Encadrant** | Prof. TAWFIK Masrour |
+| **Institution** | ENSAM Meknès |
+| **Filière** | IATD-SI (Intelligence Artificielle et Technologie des Données : Systèmes Industriels ) |
+| **Module** | Reinforcement Learning |
+| **Année** | 2025/2026 |
+
+---
+
+## 🎯 Présentation
+
+**RLPlanif** est un système d'aide à la décision pour l'optimisation du **Plan Directeur de Production (PDP)** utilisant l'algorithme **PPO (Proximal Policy Optimization)**.
+
+### Problématique
+
+Comment planifier efficacement la production pour :
+- ✅ Satisfaire la demande client
+- ✅ Minimiser les coûts (production, stockage, rupture)
+- ✅ Optimiser l'utilisation des capacités
+
+### Solution
+
+Un agent RL apprend automatiquement à équilibrer trois leviers de production :
+
+| Levier | Description | Coût Relatif |
+|--------|-------------|--------------|
+| ⚙️ **Production régulière** | Capacité standard | 1x |
+| ⏰ **Heures supplémentaires** | Flexibilité additionnelle | 1.5x |
+| 🏢 **Sous-traitance** | Capacité externe | 2x |
+
+---
+
+## ✨ Fonctionnalités
+
+- 🤖 **Agent PPO** entraîné avec Stable-Baselines3
+- 📊 **Comparaison** avec 4 stratégies baseline (Lot-for-Lot, Chase, Level, EOQ)
+- 🎮 **Interface Streamlit** interactive pour configuration et visualisation
+- 📈 **Visualisations** Plotly des performances
+- 📋 **Tableaux PDP** détaillés exportables
+- 🔬 **Exemples industriels** : Rouleurs, Compresseurs, Usinage
+
+---
 
 ## 📥 Installation
 
+### Prérequis
+
+- Python 3.9+ (recommandé : 3.11)
+- Conda ou pip
+
+### Installation Rapide
+
 ```bash
 # Cloner le projet
+git clone https://github.com/Marc1T/rl-project.git
 cd rl-project
+
+# Créer l'environnement conda
+conda create -n rl-sb python=3.11 -y
+conda activate rl-sb
 
 # Installer les dépendances
 pip install -r requirements.txt
 ```
 
-## 🔍 Étape 1: Diagnostic de l'Environnement (5 min)
-
-Lancez le script de diagnostic pour vérifier que tout fonctionne:
+### Vérification
 
 ```bash
 python scripts/test_env_diagnostic.py
 ```
 
-**Résultat attendu:**
+**Résultat attendu :**
 ```
 ✅ PASS: Fonctionnalités de base
 ✅ PASS: Échelle des rewards
@@ -26,162 +99,242 @@ python scripts/test_env_diagnostic.py
 ✅ PASS: Normalisation
 
 4/4 tests réussis
-🎉 Tous les tests sont passés! L'environnement est prêt.
-```
----
-
-## 🏋️ Étape 2: Entraînement Initial (30-60 min)
-
-### Entraînement Court (Test)
-
-```bash
-python scripts/train.py --products 1 --timesteps 50000 --horizon 12 --env_type strategic
-```
-
-**Ce qui se passe:**
-- L'environnement est créé et normalisé
-- PPO commence l'entraînement avec les hyperparamètres optimisés
-- Les modèles sont sauvegardés toutes les 10k timesteps
-- Le meilleur modèle est sauvegardé automatiquement
-
-**Temps estimé:** ~30 minutes sur CPU, ~10 minutes sur GPU
-
-### Entraînement Complet
-
-```bash
-python scripts/train.py --products 1  --timesteps 200000 --horizon 12  --env_type strategic
+🎉 Tous les tests sont passés!
 ```
 
 ---
 
-## 📊 Étape 3: Monitoring (En parallèle)
+## 🚀 Démarrage Rapide
 
-Dans un autre terminal, lancez TensorBoard:
-
-```bash
-tensorboard --logdir ./logs/tensorboard/
-```
-
-Ouvrez votre navigateur: `http://localhost:6006`
-
-**Surveiller les métriques :**
-
----
-
-## 📈 Étape 4: Évaluation (5 min)
-
-Une fois l'entraînement terminé:
+### Option 1 : Interface Streamlit (Recommandé)
 
 ```bash
-python scripts/evaluate.py --model ./models/ppo_pdp_strategic_1prod_[DATE]/best_model --episodes 10 --env_type strategic
+streamlit run app.py
 ```
 
-**Résultat attendu:**
+L'interface s'ouvre sur `http://localhost:8501` avec :
+- ⚙️ Configuration de l'environnement
+- 🏋️ Entraînement PPO
+- 📊 Évaluation et comparaison
+- 📈 Visualisations interactives
 
-```
-📊 PERFORMANCE MOYENNE:
-   Reward: -2450.3 ± 180.2
-   Stock final: 75.2
-   Niveau service: 0.945
-```
-
-**Interprétation:**
-- **Reward:** Plus élevé = meilleur
-- **Service level > 0.90:** ✅ Bon
-- **Stock final 50-150:** ✅ Équilibré
-
----
-
-## 🔄 Étape 5: Comparaison avec Baselines (10 min)
-
-Comparez votre modèle RL avec les stratégies classiques:
+### Option 2 : Ligne de Commande
 
 ```bash
+# Entraînement
+python scripts/train.py --products 1 --timesteps 100000 --horizon 12
+
+# Évaluation
+python scripts/evaluate.py --model ./models/[VOTRE_MODELE]/best_model
+
+# Comparaison avec baselines
 python scripts/compare_strategies.py
 ```
 
-**Résultat attendu:**
+---
 
-```
-COMPARAISON DES STRATÉGIES
-┌─────────────────────┬───────────┬─────────────┬──────────┐
-│ Stratégie           │ Reward    │ Service     │ Stock    │
-├─────────────────────┼───────────┼─────────────┼──────────┤
-│ Level               │ -3200.5   │ 0.850       │ 180.2    │
-│ Chase               │ -2800.3   │ 0.920       │ 45.8     │
-│ Fixed Moderate      │ -3500.1   │ 0.780       │ 220.5    │
-│ PPO (votre modèle)  │ -2450.3   │ 0.945       │ 75.2     │
-└─────────────────────┴───────────┴─────────────┴──────────┘
+## 🖥️ Interface Streamlit
 
-🏆 Meilleure stratégie: PPO
-```
+<table>
+<tr>
+<td width="50%">
+
+### 🏠 Accueil
+- Présentation du projet
+- Statistiques du système
+- Guide de démarrage
+
+</td>
+<td width="50%">
+
+### ⚙️ Configuration
+- Exemples pré-configurés
+- Configuration personnalisée
+- Import/Export JSON
+
+</td>
+</tr>
+<tr>
+<td>
+
+### 🏋️ Entraînement
+- Paramètres PPO ajustables
+- Barre de progression
+- Logs en temps réel
+
+</td>
+<td>
+
+### 📊 Évaluation
+- Comparaison PPO vs Baselines
+- Métriques détaillées
+- Graphiques interactifs
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 📁 Structure des Résultats
-
-Après l'entraînement, vous devriez avoir:
+## 📁 Structure du Projet
 
 ```
 rl-project/
-├── models/
-│   └── ppo_pdp_strategic_1prod_20241124_143022/
-│       ├── best_model.zip          # Meilleur modèle
-│       ├── final_model.zip         # Modèle final
-│       ├── vec_normalize.pkl       # Normalisation
-│       └── monitor.csv             # Logs d'entraînement
-├── logs/
-│   └── tensorboard/
-│       └── ppo_pdp_training_1/     # Logs TensorBoard
-└── evaluation_metrics.json          # Métriques d'évaluation
+├── 🖥️ app.py                 # Interface Streamlit
+├── 📋 requirements.txt       # Dépendances
+│
+├── 🎮 environments/          # Environnements Gymnasium
+│   ├── base_pdp_env.py
+│   ├── strategic_pdp_env.py
+│   └── env_registry.py
+│
+├── 🤖 agents/                # Agents RL
+│   ├── ppo_trainer.py
+│   ├── baseline_strategies.py
+│   └── rl_utils.py
+│
+├── 🧩 components/            # Composants modulaires
+│   ├── demand_generators.py
+│   ├── cost_calculators.py
+│   ├── reward_calculators.py
+│   └── ...
+│
+├── ⚙️ config/                # Configurations
+│   ├── base_config.py
+│   ├── environment_configs.py
+│   └── real_examples_configs.py
+│
+├── 📜 scripts/               # Scripts CLI
+│   ├── train.py
+│   ├── evaluate.py
+│   └── compare_strategies.py
+│
+├── 📚 docs/                  # Documentation MkDocs
+│
+├── 📊 models/                # Modèles sauvegardés
+└── 📈 logs/                  # Logs TensorBoard
 ```
 
 ---
 
-## 🎯 Objectifs de Performance
+## 📊 Résultats Typiques
 
-### Niveau Débutant (Baseline)
-- ✅ Le modèle termine l'entraînement sans erreur
-- ✅ Service level > 0.80
-- ✅ Reward meilleur que "Fixed Moderate" strategy
+### Performance sur l'exemple "Rouleurs"
 
-### Niveau Intermédiaire
-- ✅ Service level > 0.90
-- ✅ Reward meilleur que "Level" strategy
-- ✅ Stock final entre 50-150
-
-### Niveau Avancé
-- ✅ Service level > 0.95
-- ✅ Reward meilleur que toutes les baselines
-- ✅ Stock stable avec faible variance
-- ✅ Coûts de production optimisés
+| Stratégie | Coût Total | Service Level | Avantage PPO |
+|-----------|------------|---------------|--------------|
+| **PPO** | **2,450** | **98.5%** | - |
+| Lot-for-Lot | 3,200 | 95.2% | +30% |
+| Chase | 2,890 | 96.8% | +18% |
+| Level | 3,500 | 92.1% | +43% |
+| EOQ | 2,750 | 97.3% | +12% |
 
 ---
 
-## 🔧 Configurations Avancées
+## 📈 Monitoring avec TensorBoard
+
+```bash
+tensorboard --logdir logs/tensorboard
+```
+
+Ouvrez `http://localhost:6006` pour suivre :
+- 📈 Récompense moyenne
+- 📉 Perte d'entraînement
+- 🎲 Entropie de la politique
+
+---
+
+## 🔧 Configuration Avancée
+
+### Intensité de la Demande
+
+```python
+# Dans la configuration
+config = PDPConfig(
+    demand_intensity='high'  # 'low', 'medium', 'high', 'extreme'
+)
+```
+
+| Intensité | Multiplicateur | Effet |
+|-----------|----------------|-------|
+| `low` | 0.75 | Demande modérée |
+| `medium` | 0.90 | Standard |
+| `high` | 1.05 | Demande élevée, plus de HS |
+| `extreme` | 1.20 | Stress test |
 
 ### Multi-Produits
 
 ```bash
-python scripts/train.py --products 3 --timesteps 300000 --horizon 12 --env_type strategic
-```
-
-### Horizon Plus Long
-
-```bash
-python scripts/train.py --products 1  --timesteps 200000 --horizon 24 --env_type strategic
-```
-
-### Environnement de Base (Plus Simple)
-
-```bash
-python scripts/train.py --products 1  --timesteps 100000 --horizon 12 --env_type base
+python scripts/train.py --products 3 --timesteps 300000
 ```
 
 ---
 
-## 📚 Ressources Supplémentaires
+## 📚 Documentation
 
-- **Stable-Baselines3 Docs:** https://stable-baselines3.readthedocs.io/
-- **PPO Paper:** https://arxiv.org/abs/1707.06347
-- **RL Debugging:** https://andyljones.com/posts/rl-debugging.html
+La documentation complète est disponible sur [ReadTheDocs](https://rl-project.readthedocs.io/).
+
+### Sections
+
+- 📖 [Guide de démarrage](https://rl-project.readthedocs.io/getting-started/installation/)
+- 🎓 [Concepts théoriques](https://rl-project.readthedocs.io/concepts/pdp/) (PDP, RL, PPO)
+- 🏗️ [Architecture](https://rl-project.readthedocs.io/architecture/overview/)
+- 📘 [API Reference](https://rl-project.readthedocs.io/api/environments/)
+
+---
+
+## 🛠️ Technologies
+
+| Technologie | Version | Utilisation |
+|-------------|---------|-------------|
+| Python | 3.9+ | Langage principal |
+| Stable-Baselines3 | 2.2.1 | Algorithme PPO |
+| Gymnasium | 0.29.1 | Environnements RL |
+| PyTorch | 2.1.0 | Backend deep learning |
+| Streamlit | 1.28+ | Interface web |
+| Plotly | 5.18+ | Visualisations |
+| NumPy/Pandas | Latest | Calcul et données |
+
+---
+
+## 🛠️ Dépannage Rapide
+
+### Erreur CUDA
+```bash
+pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
+```
+
+### Erreur de mémoire
+Réduire `batch_size` dans la configuration:
+```python
+training_config = PPOTrainingConfig(
+    batch_size=32,  # Réduire de 64 à 32
+    n_steps=512     # Réduire de 1024
+)
+```
+
+---
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## 🙏 Remerciements
+
+- **Prof. TAWFIK Masrour** pour l'encadrement et les conseils
+- **ENSAM Meknès** pour le cadre académique
+- **OpenAI** pour l'algorithme PPO
+- **Stable-Baselines3** pour l'implémentation
+
+---
+
+<div align="center">
+
+**Projet réalisé par NANKOULI Marc Thierry**  
+ENSAM Meknès - IATD-SI - 2025/2026
+
+[⬆ Retour en haut](#-rlplanif---plan-directeur-de-production-intelligent)
+
+</div>
