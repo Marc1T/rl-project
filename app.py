@@ -358,7 +358,7 @@ st.sidebar.markdown("""
 
 st.sidebar.markdown("### 📋 Navigation")
 page = st.sidebar.radio(
-    "",
+    "Navigation",
     ["🏠 Accueil", "⚙️ Configuration", "🏋️ Entraînement PPO", 
      "📊 Évaluation", "📈 Visualisation", "📋 Tableau PDP", "🔬 Exemples Réels"],
     label_visibility="collapsed"
