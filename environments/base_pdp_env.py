@@ -36,12 +36,21 @@ class BasePDPEnvironment(gym.Env):
         )
     
     def _setup_components(self):
-        """Initialise les composants modulaires"""
-        self.normalizer = ObservationNormalizer(self.config) if self.config.normalize_observations else None
+        """Initialise les composants modulaires.
+        
+        Note: ObservationNormalizer est desactive par defaut car VecNormalize
+        dans ppo_trainer.py gere la normalisation adaptative des observations.
+        Ceci evite une double normalisation qui fausserait les valeurs.
+        """
+        # IMPORTANT: Ne pas utiliser ObservationNormalizer si VecNormalize est utilise
+        # La normalisation est geree par VecNormalize dans le trainer
+        self.normalizer = None  # Desactive pour eviter double normalisation
         self.reward_calculator = RewardCalculator(self.config)
         self.action_validator = ActionValidator(self.config)
         self.obs_builder = ObservationBuilder(self.config)
-        self.demand_generator = DemandGenerator(self.config)
+        # Obtenir l'intensité de demande depuis la config (defaut: high)
+        demand_intensity = getattr(self.config, 'demand_intensity', 'high')
+        self.demand_generator = DemandGenerator(self.config, demand_intensity=demand_intensity)
         self.cost_calculator = CostCalculator(self.config)
     
     def _create_observation_space(self) -> spaces.Dict:

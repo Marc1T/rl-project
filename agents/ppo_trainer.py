@@ -35,12 +35,14 @@ class PPOTrainer:
         # Création de l'environnement vectorisé
         self.env = DummyVecEnv([make_env])
         
-        # Normalisation avec paramètres optimisés
+        # Normalisation avec VecNormalize (UNIQUE normalisation utilisée)
+        # Note: ObservationNormalizer dans l'env est désactivé pour éviter double normalisation
+        # VecNormalize gère la normalisation adaptative des obs et rewards
         if self.env_config.normalize_observations:
             self.env = VecNormalize(
                 self.env,
-                norm_obs=True,      # Normalise les observations
-                norm_reward=True,   # Normalise les rewards
+                norm_obs=True,      # Normalise les observations (remplace ObservationNormalizer)
+                norm_reward=True,   # Normalise les rewards pour stabilité
                 clip_obs=10.0,      # Clip les observations normalisées
                 clip_reward=10.0,   # Clip les rewards normalisés
                 gamma=self.training_config.gamma
@@ -90,13 +92,13 @@ class PPOTrainer:
                 log_dir=self.training_config.model_save_path, 
                 verbose=1
             ),
-            # Décommenter l'early stopping si nécessaire
-            # EarlyStoppingCallback(
-            #     check_freq=self.training_config.save_interval * 2, 
-            #     patience=5, 
-            #     log_dir=self.training_config.model_save_path, 
-            #     verbose=1
-            # )
+            # Early Stopping activé - arrête si pas d'amélioration après patience vérifications
+            EarlyStoppingCallback(
+                check_freq=self.training_config.save_interval * 2, 
+                patience=getattr(self.training_config, 'early_stopping_patience', 5), 
+                log_dir=self.training_config.model_save_path, 
+                verbose=1
+            )
         ]
         
         print("🚀 Début de l'entraînement...")

@@ -35,6 +35,14 @@ class BaseConfig:
     max_overtime_ratio: float = 0.3
     max_subcontracting_ratio: float = 0.4
     
+    # Contraintes de capacité configurables
+    # Périodes avec capacité réduite (ex: vacances) - format: {period: reduction_ratio}
+    reduced_capacity_periods: Dict[int, float] = field(default_factory=lambda: {6: 0.5})
+    # Périodes sans heures supplémentaires - liste des périodes
+    no_overtime_periods: List[int] = field(default_factory=lambda: [])  # Ex: [11] pour dernière période
+    # Période de dernière sans overtime (si True, la dernière période n'a pas d'heures sup)
+    no_overtime_last_period: bool = True
+    
     def validate(self):
         """Valide la configuration"""
         assert self.n_products > 0, "n_products doit être > 0"

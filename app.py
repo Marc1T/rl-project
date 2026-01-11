@@ -1,4 +1,5 @@
-# app.py - Interface Streamlit pour PDP RL avec tableaux détaillés
+# app.py - Interface Streamlit pour PDP RL avec PPO
+# Version améliorée avec gestion d'erreurs et interface plus robuste
 
 import streamlit as st
 import os
@@ -7,9 +8,11 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 from datetime import datetime
 import json
 from pathlib import Path
+import traceback
 
 # Ajouter le chemin du projet
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -23,167 +26,403 @@ from agents.ppo_trainer import PPOTrainer
 
 # Configuration de la page
 st.set_page_config(
-    page_title="PDP RL Manager",
+    page_title="RLPlanif - PDP Intelligent",
     page_icon="🏭",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Style CSS personnalisé
+# Style CSS personnalisé amélioré
 st.markdown("""
     <style>
+    /* ========== VARIABLES DE COULEUR ========== */
+    :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --success-color: #00c853;
+        --warning-color: #ff9800;
+        --danger-color: #f44336;
+        --dark-bg: #1a1a2e;
+        --light-bg: #f8f9fa;
+    }
+    
+    /* ========== HEADER PRINCIPAL ========== */
     .main-header {
+        font-size: 2.8rem;
+        font-weight: 800;
+        text-align: center;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .sub-header {
+        text-align: center;
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* ========== CARTES MÉTRIQUES ========== */
+    .metric-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        border-left: 5px solid #667eea;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    .metric-card h3 {
+        color: #667eea;
+        margin-bottom: 0.8rem;
+        font-size: 1.3rem;
+    }
+    
+    .metric-card p, .metric-card li {
+        color: #555;
+        font-size: 0.95rem;
+    }
+    
+    /* ========== CARTES FEATURES ========== */
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 1.2rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.25);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-card h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .feature-card p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    /* ========== HERO SECTION ========== */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 3rem 2rem;
+        border-radius: 1.5rem;
+        color: white;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    }
+    
+    .hero-section h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-section p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    
+    /* ========== STATS CARDS ========== */
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+    
+    .stat-number {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #1f77b4;
-        text-align: center;
-        padding: 1rem;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
     }
-    .success-box {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
+    
+    /* ========== BADGES ========== */
+    .badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+    }
+    
+    .badge-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .badge-success {
+        background: #d4edda;
         color: #155724;
     }
-    .warning-box {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
+    
+    .badge-warning {
+        background: #fff3cd;
         color: #856404;
+    }
+    
+    /* ========== BOXES ========== */
+    .success-box {
+        padding: 1.2rem;
+        border-radius: 0.8rem;
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border-left: 4px solid #28a745;
+        color: #155724;
+    }
+    
+    .warning-box {
+        padding: 1.2rem;
+        border-radius: 0.8rem;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border-left: 4px solid #ffc107;
+        color: #856404;
+    }
+    
+    .info-box {
+        padding: 1.2rem;
+        border-radius: 0.8rem;
+        background: linear-gradient(135deg, #cce5ff 0%, #b8daff 100%);
+        border-left: 4px solid #007bff;
+        color: #004085;
+    }
+    
+    /* ========== TIMELINE ========== */
+    .timeline-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+    
+    .timeline-number {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .timeline-content h4 {
+        margin: 0 0 0.3rem 0;
+        color: #333;
+    }
+    
+    .timeline-content p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    /* ========== BOUTONS ========== */
+    .stButton>button {
+        width: 100%;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    /* ========== SIDEBAR ========== */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: #ffffff !important;
+    }
+    
+    [data-testid="stSidebar"] .stRadio > label {
+        font-weight: 500;
+        color: #ffffff !important;
+    }
+    
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3 {
+        color: #ffffff !important;
+    }
+    
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255,255,255,0.2);
+    }
+    
+    /* ========== DATAFRAME ========== */
+    .dataframe {
+        font-size: 0.9rem;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    /* ========== ANIMATIONS ========== */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    /* ========== PROGRESS ========== */
+    .custom-progress {
+        height: 8px;
+        border-radius: 4px;
+        background: #e9ecef;
+        overflow: hidden;
+    }
+    
+    .custom-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+        transition: width 0.3s ease;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # Initialisation de la session state
-if 'trained_models' not in st.session_state:
-    st.session_state.trained_models = []
-if 'current_config' not in st.session_state:
-    st.session_state.current_config = None
-if 'training_in_progress' not in st.session_state:
-    st.session_state.training_in_progress = False
-if 'evaluation_results' not in st.session_state:
-    st.session_state.evaluation_results = None
-if 'detailed_metrics' not in st.session_state:
-    st.session_state.detailed_metrics = None
+def init_session_state():
+    """Initialise toutes les variables de session"""
+    defaults = {
+        'trained_models': [],
+        'current_config': None,
+        'training_in_progress': False,
+        'evaluation_results': None,
+        'detailed_metrics': None,
+        'last_error': None
+    }
+    for key, value in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
 
-# Titre principal
-st.markdown('<p class="main-header">🏭 PDP RL Manager - Gestion Intelligente de Production</p>', 
-            unsafe_allow_html=True)
+init_session_state()
 
-# Sidebar - Navigation
-st.sidebar.title("📋 Navigation")
+# Titre principal avec animation
+st.markdown("""
+<div style="text-align: center; padding: 1rem 0;">
+    <p class="main-header">🏭 RLPlanif</p>
+    <p class="sub-header">Plan Directeur de Production Intelligent avec Apprentissage par Renforcement</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Sidebar - Navigation améliorée
+st.sidebar.markdown("""
+<div style="text-align: center; padding: 1rem 0; margin-bottom: 1rem;">
+    <span style="font-size: 2.5rem;">🏭</span>
+    <h2 style="margin: 0.5rem 0 0 0; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); 
+               -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        RLPlanif
+    </h2>
+</div>
+""", unsafe_allow_html=True)
+
+st.sidebar.markdown("### 📋 Navigation")
 page = st.sidebar.radio(
-    "Choisir une page",
-    ["🏠 Accueil", "⚙️ Configuration", "🏋️ Entraînement", 
-     "📊 Évaluation", "📈 Visualisation", "📋 Tableau de Production", "🔬 Exemples Réels"]
+    "",
+    ["🏠 Accueil", "⚙️ Configuration", "🏋️ Entraînement PPO", 
+     "📊 Évaluation", "📈 Visualisation", "📋 Tableau PDP", "🔬 Exemples Réels"],
+    label_visibility="collapsed"
 )
 
-# ============================
-# FONCTION: Créer tableau de production
-# ============================
-def create_production_table(metrics: list, config) -> pd.DataFrame:
-    """
-    Crée un tableau de production détaillé comme dans les images
-    
-    Args:
-        metrics: Liste des métriques par période
-        config: Configuration de l'environnement
-    
-    Returns:
-        DataFrame formaté comme un PDP
-    """
-    n_periods = len(metrics)
-    periods = [f"Période {i+1}" for i in range(n_periods)]
-    
-    # Extraire les données
-    demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
-    
-    # Calculer les capacités disponibles
-    capacities = []
-    for i in range(n_periods):
-        regular = config.regular_capacity[0]
-        overtime = config.overtime_capacity[0]
-        total = regular + overtime
-        capacities.append(f"{regular:.0f}+{overtime:.0f}={total:.0f}")
-    
-    # Productions par type
-    prod_regular = []
-    prod_overtime = []
-    prod_subcontracting = []
-    prod_total = []
-    
-    for m in metrics:
-        raw = m['raw_metrics']
-        prod = raw['total_production']
-        prod_total.append(f"{prod:.0f}")
-        
-        # Approximation de la répartition (si disponible dans raw_metrics)
-        # Sinon, on met des valeurs vides
-        prod_regular.append("")
-        prod_overtime.append("")
-        prod_subcontracting.append("")
-    
-    # Cumul de production
-    cumul_prod = np.cumsum([float(p) for p in prod_total])
-    
-    # Stock de fin de période
-    stocks = [m['inventory_level'][0] for m in metrics]
-    
-    # Créer le DataFrame
-    df = pd.DataFrame({
-        '': ['Demande', 'Capacités', 'Production HN', 'Production HS', 
-             'Production Sous-traitée', 'Cumul Production', 'Stock fin de mois'],
-        **{periods[i]: [
-            f"{demands[i]:.0f}",
-            capacities[i],
-            prod_regular[i] if prod_regular[i] else f"{prod_total[i]}",
-            prod_overtime[i],
-            prod_subcontracting[i],
-            f"{cumul_prod[i]:.0f}",
-            f"{stocks[i]:.0f}"
-        ] for i in range(n_periods)}
-    })
-    
-    return df
+# Afficher la config actuelle dans la sidebar
+if st.session_state.current_config:
+    st.sidebar.divider()
+    st.sidebar.markdown("### 📌 Config Active")
+    cfg = st.session_state.current_config
+    st.sidebar.markdown(f"""
+    <div style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 0.5rem; 
+                border-left: 3px solid #667eea; font-size: 0.9rem; color: #fff;">
+        <div>🎲 <strong>Produits:</strong> {cfg.n_products}</div>
+        <div>📅 <strong>Horizon:</strong> {cfg.horizon}</div>
+        <div>⚙️ <strong>Cap. régulière:</strong> {cfg.regular_capacity[0]}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
+# Footer sidebar
+st.sidebar.markdown("---")
+st.sidebar.markdown("""
+<div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8rem; padding: 1rem 0;">
+    <div>Made with ❤️ for Production Planning</div>
+    <div style="margin-top: 0.3rem;">PPO • Stable-Baselines3 • Gymnasium</div>
+</div>
+""", unsafe_allow_html=True)
+
+
+# ============================
+# FONCTIONS UTILITAIRES
+# ============================
 def create_detailed_production_table(metrics: list, config, strategy_name: str) -> pd.DataFrame:
     """
-    Crée un tableau de production ULTRA-DÉTAILLÉ avec toutes les informations
+    Crée un tableau de production détaillé type PDP
     """
     n_periods = len(metrics)
-    periods = [f"Période {i+1}" for i in range(n_periods)]
+    periods = [f"P{i+1}" for i in range(n_periods)]
     
-    # Extraire les données
-    demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
-    stock_avant = [m['raw_metrics']['stock_before_prod'][0] for m in metrics]
-    stock_apres_prod = [m['raw_metrics']['stock_after_prod'][0] for m in metrics]
-    stock_final = [m['inventory_level'][0] for m in metrics]
-    production = [m['total_production'] for m in metrics]
-    demand_satisfied = [m['raw_metrics']['demand_satisfied'][0] for m in metrics]
-    shortage = [m['raw_metrics']['shortage'][0] for m in metrics]
-    service_level = [m['demand_fulfillment'] for m in metrics]
-    
-    # Coûts
-    cost_prod = [m['costs']['production_cost'] for m in metrics]
-    cost_stock = [m['costs']['inventory_cost'] for m in metrics]
-    cost_rupture = [m['costs']['shortage_cost'] for m in metrics]
-    cost_total = [sum(m['costs'].values()) for m in metrics]
-    
-    # Cumuls
-    cumul_prod = np.cumsum(production)
-    cumul_demand = np.cumsum(demands)
-    cumul_cost = np.cumsum(cost_total)
+    # Extraire les données avec gestion d'erreurs
+    try:
+        demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
+        stock_avant = [m['raw_metrics']['stock_before_prod'][0] for m in metrics]
+        stock_apres_prod = [m['raw_metrics']['stock_after_prod'][0] for m in metrics]
+        stock_final = [m['inventory_level'][0] for m in metrics]
+        production = [m['total_production'] for m in metrics]
+        demand_satisfied = [m['raw_metrics']['demand_satisfied'][0] for m in metrics]
+        shortage = [m['raw_metrics']['shortage'][0] for m in metrics]
+        service_level = [m['demand_fulfillment'] for m in metrics]
+        
+        # Coûts
+        cost_prod = [m['costs']['production_cost'] for m in metrics]
+        cost_stock = [m['costs']['inventory_cost'] for m in metrics]
+        cost_rupture = [m['costs']['shortage_cost'] for m in metrics]
+        cost_total = [sum(m['costs'].values()) for m in metrics]
+        
+        # Cumuls
+        cumul_prod = np.cumsum(production)
+        cumul_demand = np.cumsum(demands)
+        cumul_cost = np.cumsum(cost_total)
+        
+    except KeyError as e:
+        st.error(f"Erreur de structure des métriques: {e}")
+        return pd.DataFrame()
     
     # Créer le DataFrame
     data = {
@@ -201,7 +440,7 @@ def create_detailed_production_table(metrics: list, config, strategy_name: str) 
             '💰 Coût Production',
             '💰 Coût Stockage',
             '💰 Coût Rupture',
-            '💰 Coût Total',
+            '💰 Coût Total Période',
             '📈 Cumul Coûts'
         ]
     }
@@ -217,7 +456,7 @@ def create_detailed_production_table(metrics: list, config, strategy_name: str) 
             f"{stock_final[i]:.0f}",
             f"{demand_satisfied[i]:.0f}",
             f"{shortage[i]:.0f}",
-            f"{service_level[i]:.2%}",
+            f"{service_level[i]:.1%}",
             f"{cost_prod[i]:.0f}",
             f"{cost_stock[i]:.0f}",
             f"{cost_rupture[i]:.0f}",
@@ -225,74 +464,310 @@ def create_detailed_production_table(metrics: list, config, strategy_name: str) 
             f"{cumul_cost[i]:.0f}"
         ]
     
-    df = pd.DataFrame(data)
+    return pd.DataFrame(data)
+
+
+def get_available_models() -> list:
+    """Retourne la liste des modèles disponibles"""
+    models_dir = Path("./models")
+    if not models_dir.exists():
+        return []
     
-    return df
+    models = []
+    for model_dir in models_dir.iterdir():
+        if model_dir.is_dir():
+            best = model_dir / "best_model.zip"
+            final = model_dir / "final_model.zip"
+            best_folder = model_dir / "best_model"
+            
+            if best.exists():
+                models.append(str(best))
+            elif (best_folder / "model.zip").exists():
+                models.append(str(best_folder / "model.zip"))
+            elif final.exists():
+                models.append(str(final))
+    
+    return sorted(models, reverse=True)
+
+
+def evaluate_ppo_model(model_path: str, config, n_episodes: int = 10):
+    """Évalue un modèle PPO et retourne les résultats détaillés"""
+    from stable_baselines3 import PPO
+    from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
+    
+    def make_env():
+        return EnvironmentRegistry.create('strategic', config)
+    
+    eval_env = DummyVecEnv([make_env])
+    
+    # Charger VecNormalize si disponible
+    model_dir = Path(model_path).parent
+    vec_normalize_path = model_dir / "vec_normalize.pkl"
+    if not vec_normalize_path.exists():
+        vec_normalize_path = model_dir.parent / "vec_normalize.pkl"
+    
+    if vec_normalize_path.exists():
+        eval_env = VecNormalize.load(str(vec_normalize_path), eval_env)
+        eval_env.training = False
+        eval_env.norm_reward = False
+    
+    model = PPO.load(model_path, env=eval_env)
+    
+    results = {
+        'rewards': [],
+        'service_levels': [],
+        'costs': [],
+        'stocks': [],
+        'detailed_metrics': []
+    }
+    
+    for _ in range(n_episodes):
+        obs = eval_env.reset()
+        done = False
+        total_reward = 0
+        total_cost = 0
+        service_levels = []
+        episode_metrics = []
+        
+        while not done:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, rewards, dones, infos = eval_env.step(action)
+            
+            reward = rewards[0]
+            info = infos[0]
+            done = dones[0]
+            
+            total_reward += reward
+            total_cost += sum(info['costs'].values())
+            service_levels.append(info['demand_fulfillment'])
+            episode_metrics.append(info)
+        
+        results['rewards'].append(total_reward)
+        results['costs'].append(total_cost)
+        results['service_levels'].append(np.mean(service_levels))
+        results['stocks'].append(info['inventory_level'][0])
+        results['detailed_metrics'].append(episode_metrics)
+    
+    return results
+
+
+def evaluate_baseline(strategy_name: str, config, n_episodes: int = 10):
+    """Évalue une stratégie baseline"""
+    StrategyClass = BASELINE_STRATEGIES[strategy_name]
+    
+    results = {
+        'rewards': [],
+        'costs': [],
+        'service_levels': [],
+        'all_metrics': []
+    }
+    
+    for _ in range(n_episodes):
+        env = EnvironmentRegistry.create('strategic', config)
+        strategy = StrategyClass(env)
+        total_reward, info = strategy.run_episode()
+        metrics = info['metrics']
+        
+        total_cost = sum(
+            m['costs']['production_cost'] + 
+            m['costs']['inventory_cost'] + 
+            m['costs']['shortage_cost']
+            for m in metrics
+        )
+        
+        results['rewards'].append(total_reward)
+        results['costs'].append(total_cost)
+        results['service_levels'].append(np.mean([m['demand_fulfillment'] for m in metrics]))
+        results['all_metrics'].append(metrics)
+    
+    return results
+
 
 # ============================
 # PAGE 1: ACCUEIL
 # ============================
 if page == "🏠 Accueil":
-    st.header("Bienvenue dans PDP RL Manager")
     
-    col1, col2, col3 = st.columns(3)
+    # Hero Section
+    st.markdown("""
+    <div class="hero-section">
+        <h1>🏭 Bienvenue dans RLPlanif</h1>
+        <p>Optimisation Intelligente du Plan Directeur de Production avec l'Apprentissage par Renforcement</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Badges de technologies
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="badge badge-primary">🤖 PPO Algorithm</span>
+        <span class="badge badge-primary">🔥 PyTorch</span>
+        <span class="badge badge-primary">📊 Stable-Baselines3</span>
+        <span class="badge badge-primary">🎮 Gymnasium</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Section: Qu'est-ce que RLPlanif?
+    st.markdown("### 💡 Qu'est-ce que RLPlanif?")
+    st.markdown("""
+    <div class="metric-card">
+        <p><strong>RLPlanif</strong> est un système avancé d'aide à la décision pour la gestion 
+        du <strong>Plan Directeur de Production (PDP)</strong>. Il utilise l'algorithme 
+        <strong>PPO (Proximal Policy Optimization)</strong> pour apprendre automatiquement 
+        les meilleures stratégies de production face à une demande variable.</p>
+        <br>
+        <p>Le système optimise trois leviers de production :</p>
+        <ul>
+            <li>⚙️ <strong>Production régulière</strong> - Capacité standard au coût optimal</li>
+            <li>⏰ <strong>Heures supplémentaires</strong> - Flexibilité à coût modéré</li>
+            <li>🏢 <strong>Sous-traitance</strong> - Capacité externe à coût premium</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Section: Comment ça marche? (Timeline)
+    st.markdown("### 🚀 Comment Utiliser l'Application?")
+    
+    col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        <div class="metric-card">
-        <h3>🎯 À Propos</h3>
-        <p>Application de gestion de production basée sur le Reinforcement Learning (PPO).</p>
-        <ul>
-        <li>Configurez votre environnement</li>
-        <li>Entraînez des modèles RL</li>
-        <li>Comparez avec des baselines</li>
-        <li>Visualisez les résultats en tableaux détaillés</li>
-        </ul>
+        <div class="timeline-item">
+            <div class="timeline-number">1</div>
+            <div class="timeline-content">
+                <h4>⚙️ Configuration</h4>
+                <p>Définissez votre environnement industriel : capacités, coûts, demande attendue...</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-number">2</div>
+            <div class="timeline-content">
+                <h4>🏋️ Entraînement</h4>
+                <p>Lancez l'entraînement de l'agent PPO sur votre configuration.</p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div class="metric-card">
-        <h3>🚀 Démarrage Rapide</h3>
-        <ol>
-        <li>Créez une configuration</li>
-        <li>Lancez l'entraînement</li>
-        <li>Évaluez les performances</li>
-        <li>Consultez le tableau de production</li>
-        </ol>
+        <div class="timeline-item">
+            <div class="timeline-number">3</div>
+            <div class="timeline-content">
+                <h4>📊 Évaluation</h4>
+                <p>Comparez les performances du modèle aux stratégies classiques.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-number">4</div>
+            <div class="timeline-content">
+                <h4>📋 Analyse</h4>
+                <p>Visualisez les tableaux PDP détaillés et exportez vos plans.</p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
     
-    with col3:
-        st.markdown("""
-        <div class="metric-card">
-        <h3>📚 Ressources</h3>
-        <ul>
-        <li>Exemples pré-configurés</li>
-        <li>Stratégies baseline</li>
-        <li>Comparaisons automatiques</li>
-        <li>Tableaux de production PDP</li>
-        </ul>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    st.divider()
+    # Section: Stratégies
+    st.markdown("### 📊 Stratégies de Production Disponibles")
     
-    # Statistiques
-    st.subheader("📊 Statistiques")
+    col1, col2, col3, col4, col5 = st.columns(5)
     
-    models_dir = Path("./models")
-    if models_dir.exists():
-        model_count = len(list(models_dir.glob("*/")))
-    else:
-        model_count = 0
+    strategies_info = [
+        (col1, "🤖", "PPO", "Agent RL intelligent et adaptatif"),
+        (col2, "🎯", "Lot-for-Lot", "Production exacte = Demande"),
+        (col3, "🔄", "Chase", "Suivre la demande au plus près"),
+        (col4, "📏", "Level", "Production lissée constante"),
+        (col5, "💰", "EOQ", "Quantité économique optimale"),
+    ]
+    
+    for col, icon, name, desc in strategies_info:
+        with col:
+            st.markdown(f"""
+            <div class="feature-card">
+                <div class="feature-icon">{icon}</div>
+                <h3>{name}</h3>
+                <p>{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    
+    # Section: Statistiques du Système
+    st.markdown("### 📈 État du Système")
+    
+    models = get_available_models()
     
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Modèles Entraînés", model_count)
-    col2.metric("Stratégies Disponibles", len(BASELINE_STRATEGIES))
-    col3.metric("Exemples Réels", 4)
-    col4.metric("Configurations", "Illimité")
+    
+    stats_data = [
+        (col1, len(models), "Modèles Entraînés", "🤖"),
+        (col2, len(BASELINE_STRATEGIES), "Stratégies Baseline", "📋"),
+        (col3, 4, "Exemples Industriels", "🔬"),
+        (col4, "Oui" if st.session_state.current_config else "Non", "Config Active", "⚙️"),
+    ]
+    
+    for col, value, label, icon in stats_data:
+        with col:
+            st.markdown(f"""
+            <div class="stat-card">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">{icon}</div>
+                <div class="stat-number">{value}</div>
+                <div class="stat-label">{label}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Section: Modèles récents
+    if models:
+        st.markdown("### 🕐 Modèles Récemment Entraînés")
+        
+        for i, model in enumerate(models[:5]):
+            model_name = Path(model).parent.name
+            st.markdown(f"""
+            <div class="metric-card" style="padding: 0.8rem 1.2rem;">
+                <span class="badge badge-success">{i+1}</span>
+                <strong>{model_name}</strong>
+                <span style="color: #888; font-size: 0.85rem; margin-left: 1rem;">📁 {Path(model).name}</span>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    else:
+        st.markdown("""
+        <div class="info-box">
+            <strong>ℹ️ Aucun modèle entraîné</strong><br>
+            Configurez un environnement et lancez un entraînement pour commencer!
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Section: Guide Rapide
+    st.markdown("### ⚡ Guide Rapide")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="success-box">
+            <strong>✅ Pour Commencer Rapidement:</strong><br>
+            1. Allez dans <strong>⚙️ Configuration</strong><br>
+            2. Sélectionnez un exemple (ex: Rouleurs)<br>
+            3. Lancez l'entraînement dans <strong>🏋️ Entraînement PPO</strong>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="warning-box">
+            <strong>💡 Conseil:</strong><br>
+            Pour de meilleurs résultats, utilisez au moins <strong>50 000 timesteps</strong> 
+            d'entraînement et ajustez l'intensité de la demande selon vos besoins.
+        </div>
+        """, unsafe_allow_html=True)
+
 
 # ============================
 # PAGE 2: CONFIGURATION
@@ -300,77 +775,98 @@ if page == "🏠 Accueil":
 elif page == "⚙️ Configuration":
     st.header("⚙️ Configuration de l'Environnement")
     
-    # Choix du mode de configuration
     config_mode = st.radio(
         "Mode de configuration",
-        ["🎯 Exemple Pré-configuré", "✏️ Configuration Personnalisée", "📁 Charger depuis Fichier"]
+        ["🎯 Exemple Pré-configuré", "✏️ Configuration Personnalisée", "📁 Charger JSON"],
+        horizontal=True
     )
     
     if config_mode == "🎯 Exemple Pré-configuré":
-        st.subheader("Choisir un exemple")
+        st.subheader("Choisir un exemple industriel")
         
-        example = st.selectbox(
-            "Exemple",
-            ["rouleurs", "pdp_table", "compresseurs", "usinage"],
-            help="Exemples basés sur des cas réels"
-        )
+        col1, col2 = st.columns([1, 2])
         
-        # Afficher les détails de l'exemple
-        if example:
-            config = get_example_config(example)
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown("**📋 Paramètres**")
-                st.write(f"- Horizon: {config.horizon} périodes")
-                st.write(f"- Produits: {config.n_products}")
-                st.write(f"- Capacité régulière: {config.regular_capacity}")
-                st.write(f"- Heures sup: {config.overtime_capacity}")
-                st.write(f"- Sous-traitance: {config.subcontracting_capacity}")
-            
-            with col2:
-                st.markdown("**💰 Coûts**")
-                st.write(f"- Production régulière: {config.regular_cost}")
-                st.write(f"- Heures sup: {config.overtime_cost}")
-                st.write(f"- Sous-traitance: {config.subcontracting_cost}")
-                st.write(f"- Stockage: {config.holding_cost}")
-                st.write(f"- Rupture: {config.shortage_cost}")
-            
-            if st.button("✅ Utiliser cette configuration"):
-                st.session_state.current_config = config
-                st.success("✅ Configuration chargée avec succès!")
+        with col1:
+            example = st.selectbox(
+                "Exemple",
+                ["rouleurs", "pdp_table", "compresseurs", "usinage"],
+                format_func=lambda x: {
+                    "rouleurs": "🔧 Rouleurs (12 périodes)",
+                    "pdp_table": "📊 PDP Table (6 périodes)", 
+                    "compresseurs": "⚙️ Compresseurs (8 périodes)",
+                    "usinage": "🏭 Usinage (12 périodes)"
+                }.get(x, x)
+            )
+        
+        with col2:
+            if example:
+                config = get_example_config(example)
+                
+                st.markdown("**📋 Paramètres de l'exemple**")
+                params_df = pd.DataFrame({
+                    'Paramètre': ['Horizon', 'Produits', 'Cap. Régulière', 'Cap. HS', 'Cap. Sous-trait.', 'Stock Initial'],
+                    'Valeur': [
+                        f"{config.horizon} périodes",
+                        str(config.n_products),
+                        str(config.regular_capacity[0]),
+                        str(config.overtime_capacity[0]),
+                        str(config.subcontracting_capacity[0]),
+                        str(config.initial_stock[0])
+                    ]
+                })
+                st.dataframe(params_df, hide_index=True, width='stretch')
+        
+        if st.button("✅ Utiliser cette configuration", type="primary"):
+            st.session_state.current_config = config
+            st.success(f"✅ Configuration '{example}' chargée!")
+            st.rerun()
     
     elif config_mode == "✏️ Configuration Personnalisée":
         st.subheader("Créer une configuration personnalisée")
         
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         
         with col1:
             st.markdown("**🏭 Paramètres Généraux**")
-            n_products = st.number_input("Nombre de produits", min_value=1, max_value=5, value=1)
-            horizon = st.number_input("Horizon (périodes)", min_value=3, max_value=24, value=12)
-            
-            st.markdown("**⚡ Capacités de Production**")
-            regular_capacity = st.number_input("Capacité régulière", min_value=1.0, value=100.0)
-            overtime_capacity = st.number_input("Capacité heures sup", min_value=0.0, value=30.0)
-            subcontracting_capacity = st.number_input("Capacité sous-traitance", min_value=0.0, value=50.0)
+            n_products = st.number_input("Nombre de produits", 1, 5, 1)
+            horizon = st.number_input("Horizon (périodes)", 3, 24, 12)
             
             st.markdown("**📦 Stocks**")
-            initial_stock = st.number_input("Stock initial", min_value=0.0, value=50.0)
-            max_stock = st.number_input("Stock maximum", min_value=1.0, value=500.0)
+            initial_stock = st.number_input("Stock initial", 0.0, 1000.0, 50.0)
+            max_stock = st.number_input("Stock maximum", 100.0, 5000.0, 500.0)
         
         with col2:
-            st.markdown("**💵 Coûts**")
-            regular_cost = st.number_input("Coût régulier", min_value=0.1, value=10.0)
-            overtime_cost = st.number_input("Coût heures sup", min_value=0.1, value=15.0)
-            subcontracting_cost = st.number_input("Coût sous-traitance", min_value=0.1, value=20.0)
-            holding_cost = st.number_input("Coût de stockage", min_value=0.0, value=2.0)
-            shortage_cost = st.number_input("Coût de rupture", min_value=0.0, value=100.0)
+            st.markdown("**⚡ Capacités de Production**")
+            regular_capacity = st.number_input("Capacité régulière", 1.0, 1000.0, 100.0)
+            overtime_capacity = st.number_input("Capacité heures sup", 0.0, 500.0, 30.0)
+            subcontracting_capacity = st.number_input("Capacité sous-traitance", 0.0, 500.0, 50.0)
             
-            st.markdown("**🎯 Objectifs**")
-            service_level_target = st.slider("Niveau de service cible", 0.0, 1.0, 0.95)
+            st.markdown("**🎯 Objectif**")
+            service_level_target = st.slider("Niveau de service cible", 0.8, 1.0, 0.95)
         
-        if st.button("✅ Créer la configuration"):
+        with col3:
+            st.markdown("**💵 Coûts unitaires**")
+            regular_cost = st.number_input("Coût régulier", 0.1, 100.0, 10.0)
+            overtime_cost = st.number_input("Coût heures sup", 0.1, 200.0, 15.0)
+            subcontracting_cost = st.number_input("Coût sous-traitance", 0.1, 300.0, 20.0)
+            holding_cost = st.number_input("Coût de stockage", 0.0, 50.0, 2.0)
+            shortage_cost = st.number_input("Coût de rupture", 0.0, 500.0, 100.0)
+        
+        # Intensité de la demande
+        st.markdown("**📈 Génération de Demande**")
+        demand_intensity = st.select_slider(
+            "Intensité de la demande",
+            options=["low", "medium", "high", "extreme"],
+            value="high",
+            format_func=lambda x: {
+                "low": "🟢 Faible (< capacité)",
+                "medium": "🟡 Moyenne (~ capacité)", 
+                "high": "🟠 Haute (> capacité, heures supp)",
+                "extreme": "🔴 Extrême (sous-traitance nécessaire)"
+            }.get(x, x)
+        )
+        
+        if st.button("✅ Créer la configuration", type="primary"):
             config = PDPEnvironmentConfig(
                 n_products=n_products,
                 horizon=horizon,
@@ -385,48 +881,46 @@ elif page == "⚙️ Configuration":
                 holding_cost=[holding_cost] * n_products,
                 shortage_cost=[shortage_cost] * n_products,
                 service_level_target=service_level_target,
+                demand_intensity=demand_intensity,
                 normalize_observations=True
             )
             st.session_state.current_config = config
-            st.success("✅ Configuration créée avec succès!")
+            st.success("✅ Configuration personnalisée créée!")
+            st.rerun()
     
-    else:  # Charger depuis fichier
-        st.subheader("Charger une configuration depuis un fichier JSON")
+    else:  # Charger JSON
+        st.subheader("Charger depuis un fichier JSON")
         
-        uploaded_file = st.file_uploader("Choisir un fichier JSON", type=['json'])
+        uploaded_file = st.file_uploader("Fichier de configuration", type=['json'])
         
-        if uploaded_file is not None:
+        if uploaded_file:
             try:
                 config_dict = json.load(uploaded_file)
                 config = PDPEnvironmentConfig(**config_dict)
                 st.session_state.current_config = config
                 st.success("✅ Configuration chargée depuis le fichier!")
             except Exception as e:
-                st.error(f"❌ Erreur lors du chargement: {e}")
+                st.error(f"❌ Erreur: {e}")
     
     # Afficher la configuration actuelle
     if st.session_state.current_config:
         st.divider()
-        st.subheader("📋 Configuration Actuelle")
+        st.subheader("📌 Configuration Actuelle")
         
-        config = st.session_state.current_config
-        config_df = pd.DataFrame({
-            'Paramètre': ['Produits', 'Horizon', 'Capacité Régulière', 'Stock Initial', 'Coût Régulier'],
-            'Valeur': [
-                config.n_products,
-                config.horizon,
-                config.regular_capacity[0],
-                config.initial_stock[0],
-                config.regular_cost[0]
-            ]
-        })
-        st.dataframe(config_df, width='stretch')
+        cfg = st.session_state.current_config
+        
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Produits", cfg.n_products)
+        col2.metric("Horizon", f"{cfg.horizon} périodes")
+        col3.metric("Cap. Totale", f"{cfg.regular_capacity[0] + cfg.overtime_capacity[0] + cfg.subcontracting_capacity[0]:.0f}")
+        col4.metric("Service Cible", f"{cfg.service_level_target:.0%}")
+
 
 # ============================
-# PAGE 3: ENTRAÎNEMENT
+# PAGE 3: ENTRAÎNEMENT PPO
 # ============================
-elif page == "🏋️ Entraînement":
-    st.header("🏋️ Entraînement du Modèle RL")
+elif page == "🏋️ Entraînement PPO":
+    st.header("🏋️ Entraînement du Modèle PPO")
     
     if st.session_state.current_config is None:
         st.warning("⚠️ Veuillez d'abord créer une configuration dans la page Configuration")
@@ -434,18 +928,13 @@ elif page == "🏋️ Entraînement":
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("Paramètres d'Entraînement")
+            st.subheader("📊 Paramètres d'Entraînement")
             
-            timesteps = st.selectbox(
+            timesteps = st.select_slider(
                 "Nombre de timesteps",
-                [30000, 50000, 100000, 200000, 500000],
-                index=2
-            )
-            
-            env_type = st.selectbox(
-                "Type d'environnement",
-                ["strategic", "base"],
-                help="Strategic: avec contraintes de stabilité, Base: environnement simple"
+                options=[10000, 30000, 50000, 100000, 200000, 500000],
+                value=100000,
+                format_func=lambda x: f"{x:,}"
             )
             
             learning_rate = st.select_slider(
@@ -456,92 +945,105 @@ elif page == "🏋️ Entraînement":
             )
             
             run_name = st.text_input(
-                "Nom de l'entraînement",
-                value=f"training_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                "Nom de l'expérience",
+                value=f"ppo_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             )
         
         with col2:
-            st.subheader("Architecture du Réseau")
+            st.subheader("🧠 Architecture du Réseau")
             
-            policy_layers = st.multiselect(
-                "Couches du réseau",
-                [64, 128, 256, 512],
-                default=[256, 128, 64]
+            architecture = st.selectbox(
+                "Architecture",
+                ["small", "medium", "large"],
+                index=1,
+                format_func=lambda x: {
+                    "small": "🔹 Small (64, 64)",
+                    "medium": "🔸 Medium (256, 128, 64)",
+                    "large": "🔺 Large (512, 256, 128)"
+                }.get(x, x)
             )
             
-            n_epochs = st.slider("Nombre d'epochs", 5, 20, 10)
-            batch_size = st.slider("Batch size", 32, 256, 64, step=32)
+            arch_map = {
+                "small": [64, 64],
+                "medium": [256, 128, 64],
+                "large": [512, 256, 128]
+            }
             
-            st.markdown("**Estimation du temps**")
-            estimated_time = timesteps / 10000 * 3  # Approximation
+            n_epochs = st.slider("Epochs PPO", 5, 30, 10)
+            batch_size = st.select_slider("Batch size", options=[32, 64, 128, 256], value=64)
+            
+            # Estimation du temps
+            estimated_time = timesteps / 10000 * 2  # ~2 min par 10k steps
             st.info(f"⏱️ Temps estimé: ~{estimated_time:.0f} minutes")
         
         st.divider()
         
-        # Bouton d'entraînement
         if st.button("🚀 Lancer l'Entraînement", type="primary", width='stretch'):
-            st.session_state.training_in_progress = True
             
-            # Créer la configuration d'entraînement
             training_config = PPOTrainingConfig(
                 total_timesteps=timesteps,
                 learning_rate=learning_rate,
-                policy_arch=sorted(policy_layers, reverse=True),
+                policy_arch=arch_map[architecture],
                 n_epochs=n_epochs,
                 batch_size=batch_size,
                 model_save_path=f"./models/{run_name}",
                 tensorboard_log_path=f"./logs/tensorboard/{run_name}"
             )
             
-            # Barre de progression
-            progress_bar = st.progress(0)
-            status_text = st.empty()
+            progress_bar = st.progress(0, text="Initialisation...")
+            status_container = st.empty()
             
             try:
-                status_text.text("🔧 Initialisation de l'environnement...")
-                progress_bar.progress(10)
+                with status_container.container():
+                    st.info("🔧 Configuration de l'environnement...")
                 
-                # Créer et configurer le trainer
+                progress_bar.progress(10, text="Configuration...")
+                
                 trainer = PPOTrainer(st.session_state.current_config, training_config)
-                trainer.setup(env_name=env_type)
+                trainer.setup(env_name='strategic')
                 
-                status_text.text("🏋️ Entraînement en cours...")
-                progress_bar.progress(30)
+                progress_bar.progress(20, text="Entraînement en cours...")
                 
-                # Lancer l'entraînement
+                with status_container.container():
+                    st.info(f"🏋️ Entraînement PPO: {timesteps:,} timesteps...")
+                
                 trainer.train()
                 
-                progress_bar.progress(100)
-                status_text.text("✅ Entraînement terminé!")
+                progress_bar.progress(100, text="Terminé!")
                 
-                # Sauvegarder le modèle dans la session
                 st.session_state.trained_models.append({
                     'name': run_name,
                     'path': training_config.model_save_path,
                     'timesteps': timesteps,
-                    'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    'date': datetime.now().strftime('%Y-%m-%d %H:%M')
                 })
                 
-                st.success(f"✅ Modèle entraîné avec succès!\n\nModèle sauvegardé: {training_config.model_save_path}")
-                
-                # Afficher le lien TensorBoard
-                st.info(f"📊 Pour voir les logs d'entraînement:\n\n`tensorboard --logdir {training_config.tensorboard_log_path}`")
+                with status_container.container():
+                    st.success(f"""
+                    ✅ **Entraînement terminé avec succès!**
+                    
+                    📁 Modèle sauvegardé: `{training_config.model_save_path}`
+                    
+                    📊 Pour voir les logs TensorBoard:
+                    ```
+                    tensorboard --logdir {training_config.tensorboard_log_path}
+                    ```
+                    """)
                 
             except Exception as e:
-                st.error(f"❌ Erreur lors de l'entraînement: {e}")
-                import traceback
-                st.code(traceback.format_exc())
-            
-            finally:
-                st.session_state.training_in_progress = False
+                progress_bar.progress(0, text="Erreur!")
+                with status_container.container():
+                    st.error(f"❌ Erreur: {e}")
+                    with st.expander("Détails de l'erreur"):
+                        st.code(traceback.format_exc())
         
-        # Afficher les modèles entraînés
+        # Liste des modèles entraînés
         if st.session_state.trained_models:
             st.divider()
-            st.subheader("📚 Modèles Entraînés")
-            
+            st.subheader("📚 Historique des Entraînements")
             models_df = pd.DataFrame(st.session_state.trained_models)
-            st.dataframe(models_df, width='stretch')
+            st.dataframe(models_df, width='stretch', hide_index=True)
+
 
 # ============================
 # PAGE 4: ÉVALUATION
@@ -552,128 +1054,61 @@ elif page == "📊 Évaluation":
     if st.session_state.current_config is None:
         st.warning("⚠️ Veuillez d'abord créer une configuration")
     else:
-        # Sélection du modèle à évaluer
-        st.subheader("Choisir un modèle à évaluer")
-        
-        # Lister les modèles disponibles
-        models_dir = Path("./models")
-        if models_dir.exists():
-            available_models = [str(p) for p in models_dir.glob("*/best_model.zip")]
-            if not available_models:
-                available_models = [str(p) for p in models_dir.glob("*/final_model.zip")]
-        else:
-            available_models = []
+        available_models = get_available_models()
         
         if not available_models:
-            st.info("ℹ️ Aucun modèle disponible. Entraînez d'abord un modèle.")
+            st.info("ℹ️ Aucun modèle PPO disponible. Entraînez d'abord un modèle.")
         else:
-            selected_model = st.selectbox("Modèle", available_models)
-            
             col1, col2 = st.columns(2)
+            
             with col1:
-                n_episodes = st.slider("Nombre d'épisodes", 1, 50, 10)
+                selected_model = st.selectbox(
+                    "🤖 Modèle PPO à évaluer",
+                    available_models,
+                    format_func=lambda x: Path(x).parent.name
+                )
+            
             with col2:
+                n_episodes = st.slider("Nombre d'épisodes", 1, 50, 10)
                 compare_baselines = st.checkbox("Comparer avec les baselines", value=True)
             
-            if st.button("🎯 Lancer l'Évaluation", type="primary"):
-                with st.spinner("Évaluation en cours..."):
-                    # Import des fonctions d'évaluation
-                    from stable_baselines3 import PPO
-                    from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
+            if st.button("🎯 Lancer l'Évaluation", type="primary", width='stretch'):
+                progress = st.progress(0, text="Évaluation PPO...")
+                
+                try:
+                    # Évaluer PPO
+                    ppo_results = evaluate_ppo_model(
+                        selected_model, 
+                        st.session_state.current_config, 
+                        n_episodes
+                    )
                     
-                    # Évaluer le modèle RL
-                    def make_env():
-                        return EnvironmentRegistry.create('strategic', st.session_state.current_config)
-                    
-                    eval_env = DummyVecEnv([make_env])
-                    
-                    # Charger VecNormalize
-                    vec_normalize_path = Path(selected_model).parent / "vec_normalize.pkl"
-                    if vec_normalize_path.exists():
-                        eval_env = VecNormalize.load(str(vec_normalize_path), eval_env)
-                        eval_env.training = False
-                        eval_env.norm_reward = False
-                    
-                    model = PPO.load(selected_model, env=eval_env)
-                    
-                    # Collecter les résultats AVEC métriques détaillées
-                    rl_results = {
-                        'rewards': [],
-                        'service_levels': [],
-                        'costs': [],
-                        'stocks': [],
-                        'detailed_metrics': []
-                    }
-                    
-                    for ep in range(n_episodes):
-                        obs = eval_env.reset()
-                        done = False
-                        total_reward = 0
-                        total_cost = 0
-                        service_levels = []
-                        episode_metrics = []
-                        
-                        while not done:
-                            action, _ = model.predict(obs, deterministic=True)
-                            obs, rewards, dones, infos = eval_env.step(action)
-                            
-                            reward = rewards[0]
-                            info = infos[0]
-                            done = dones[0]
-                            
-                            total_reward += reward
-                            total_cost += sum(info['costs'].values())
-                            service_levels.append(info['demand_fulfillment'])
-                            episode_metrics.append(info)
-                        
-                        rl_results['rewards'].append(total_reward)
-                        rl_results['costs'].append(total_cost)
-                        rl_results['service_levels'].append(np.mean(service_levels))
-                        rl_results['stocks'].append(info['inventory_level'][0])
-                        rl_results['detailed_metrics'].append(episode_metrics)
-                    
-                    # Stocker les résultats
                     st.session_state.evaluation_results = {
-                        'RL (PPO)': {
-                            'reward': np.mean(rl_results['rewards']),
-                            'cost': np.mean(rl_results['costs']),
-                            'service': np.mean(rl_results['service_levels']),
-                            'stock': np.mean(rl_results['stocks']),
-                            'metrics': rl_results['detailed_metrics'][0]  # Premier épisode
+                        'PPO (RL)': {
+                            'reward': np.mean(ppo_results['rewards']),
+                            'cost': np.mean(ppo_results['costs']),
+                            'service': np.mean(ppo_results['service_levels']),
+                            'stock': np.mean(ppo_results['stocks']),
+                            'metrics': ppo_results['detailed_metrics'][0]
                         }
                     }
                     
-                    # Comparer avec baselines si demandé
+                    progress.progress(30, text="PPO évalué!")
+                    
+                    # Évaluer baselines
                     if compare_baselines:
-                        for strategy_name in BASELINE_STRATEGIES.keys():
-                            env = EnvironmentRegistry.create('strategic', st.session_state.current_config)
-                            StrategyClass = BASELINE_STRATEGIES[strategy_name]
-                            strategy = StrategyClass(env)
+                        strategies = list(BASELINE_STRATEGIES.keys())
+                        for i, strategy_name in enumerate(strategies):
+                            progress.progress(
+                                30 + int(70 * (i+1) / len(strategies)),
+                                text=f"Évaluation {strategy_name}..."
+                            )
                             
-                            baseline_results = {
-                                'rewards': [],
-                                'costs': [],
-                                'service_levels': [],
-                                'all_metrics': []
-                            }
-                            
-                            for _ in range(n_episodes):
-                                total_reward, info = strategy.run_episode()
-                                metrics = info['metrics']
-                                
-                                total_cost = sum(
-                                    m['costs']['production_cost'] + 
-                                    m['costs']['inventory_cost'] + 
-                                    m['costs']['shortage_cost']
-                                    for m in metrics
-                                )
-                                
-                                baseline_results['rewards'].append(total_reward)
-                                baseline_results['costs'].append(total_cost)
-                                baseline_results['service_levels'].append(
-                                    np.mean([m['demand_fulfillment'] for m in metrics])
-                                )
-                                baseline_results['all_metrics'].append(metrics)
+                            baseline_results = evaluate_baseline(
+                                strategy_name, 
+                                st.session_state.current_config, 
+                                n_episodes
+                            )
                             
                             st.session_state.evaluation_results[strategy_name] = {
                                 'reward': np.mean(baseline_results['rewards']),
@@ -682,27 +1117,46 @@ elif page == "📊 Évaluation":
                                 'stock': 0,
                                 'metrics': baseline_results['all_metrics'][0]
                             }
-                
-                st.success("✅ Évaluation terminée!")
+                    
+                    progress.progress(100, text="Terminé!")
+                    st.success("✅ Évaluation terminée!")
+                    
+                except Exception as e:
+                    st.error(f"❌ Erreur: {e}")
+                    with st.expander("Détails"):
+                        st.code(traceback.format_exc())
             
             # Afficher les résultats
             if st.session_state.evaluation_results:
                 st.divider()
                 st.subheader("📊 Résultats")
                 
-                results_df = pd.DataFrame(st.session_state.evaluation_results).T
-                results_df = results_df.round(2)
-                results_df.columns = ['Reward Moyen', 'Coût Total', 'Service Level', 'Stock Final']
+                # Créer DataFrame sans la colonne 'metrics' (qui contient les détails)
+                display_data = {
+                    name: {k: v for k, v in data.items() if k != 'metrics'}
+                    for name, data in st.session_state.evaluation_results.items()
+                }
+                results_df = pd.DataFrame(display_data).T
+                results_df.columns = ['Reward', 'Coût', 'Service', 'Stock Final']
+                results_df = results_df.round(3)
                 
-                st.dataframe(results_df, width='stretch')
+                # Mettre en évidence les meilleures valeurs
+                st.dataframe(
+                    results_df.style.highlight_max(subset=['Reward', 'Service'], color='lightgreen')
+                                   .highlight_min(subset=['Coût'], color='lightgreen'),
+                    width='stretch'
+                )
                 
-                # Identifier le meilleur
-                best_service = results_df['Service Level'].idxmax()
-                best_reward = results_df['Reward Moyen'].idxmax()
+                # Identifier les meilleurs
+                best_reward = results_df['Reward'].idxmax()
+                best_service = results_df['Service'].idxmax()
+                best_cost = results_df['Coût'].idxmin()
                 
-                col1, col2 = st.columns(2)
-                col1.success(f"🏆 Meilleur Service: **{best_service}** ({results_df.loc[best_service, 'Service Level']:.3f})")
-                col2.success(f"🏆 Meilleur Reward: **{best_reward}** ({results_df.loc[best_reward, 'Reward Moyen']:.2f})")
+                col1, col2, col3 = st.columns(3)
+                col1.success(f"🏆 Meilleur Reward: **{best_reward}**")
+                col2.success(f"🎯 Meilleur Service: **{best_service}** ({results_df.loc[best_service, 'Service']:.1%})")
+                col3.success(f"💰 Coût Minimal: **{best_cost}**")
+
 
 # ============================
 # PAGE 5: VISUALISATION
@@ -713,131 +1167,133 @@ elif page == "📈 Visualisation":
     if st.session_state.evaluation_results is None:
         st.warning("⚠️ Veuillez d'abord effectuer une évaluation")
     else:
-        # Graphique de comparaison
-        st.subheader("Comparaison des Stratégies")
+        # Créer DataFrame sans la colonne 'metrics'
+        display_data = {
+            name: {k: v for k, v in data.items() if k != 'metrics'}
+            for name, data in st.session_state.evaluation_results.items()
+        }
+        results_df = pd.DataFrame(display_data).T
         
-        results_df = pd.DataFrame(st.session_state.evaluation_results).T
-        
-        # Graphique en barres pour les métriques
-        fig = go.Figure()
-        
-        metrics = ['reward', 'cost', 'service', 'stock']
-        metric_names = ['Reward', 'Coût', 'Service Level', 'Stock Final']
-        
-        tab1, tab2, tab3, tab4 = st.tabs(metric_names)
+        # Tabs pour différentes vues
+        tab1, tab2, tab3 = st.tabs(["📊 Comparaison", "🎯 Radar", "📈 Détails"])
         
         with tab1:
-            fig1 = px.bar(
-                x=results_df.index,
-                y=results_df['reward'],
-                labels={'x': 'Stratégie', 'y': 'Reward Moyen'},
-                title='Comparaison des Rewards',
-                color=results_df['reward'],
-                color_continuous_scale='RdYlGn'
-            )
-            st.plotly_chart(fig1, width='stretch')
-        
-        with tab2:
-            fig2 = px.bar(
+            st.subheader("Comparaison des Stratégies")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                fig_reward = px.bar(
+                    x=results_df.index,
+                    y=results_df['reward'],
+                    title='Reward Moyen par Stratégie',
+                    labels={'x': 'Stratégie', 'y': 'Reward'},
+                    color=results_df['reward'],
+                    color_continuous_scale='RdYlGn'
+                )
+                st.plotly_chart(fig_reward, width='stretch')
+            
+            with col2:
+                fig_service = px.bar(
+                    x=results_df.index,
+                    y=results_df['service'],
+                    title='Niveau de Service par Stratégie',
+                    labels={'x': 'Stratégie', 'y': 'Service Level'},
+                    color=results_df['service'],
+                    color_continuous_scale='RdYlGn'
+                )
+                fig_service.add_hline(y=0.95, line_dash="dash", line_color="red",
+                                     annotation_text="Cible 95%")
+                st.plotly_chart(fig_service, width='stretch')
+            
+            # Coûts
+            fig_cost = px.bar(
                 x=results_df.index,
                 y=results_df['cost'],
-                labels={'x': 'Stratégie', 'y': 'Coût Total'},
-                title='Comparaison des Coûts',
+                title='Coût Total par Stratégie',
+                labels={'x': 'Stratégie', 'y': 'Coût'},
                 color=results_df['cost'],
                 color_continuous_scale='RdYlGn_r'
             )
-            st.plotly_chart(fig2, width='stretch')
+            st.plotly_chart(fig_cost, width='stretch')
+        
+        with tab2:
+            st.subheader("Vue Multi-Critères (Radar)")
+            
+            # Normaliser pour le radar
+            norm_df = results_df.copy()
+            for col in ['reward', 'service']:
+                norm_df[col] = (norm_df[col] - norm_df[col].min()) / (norm_df[col].max() - norm_df[col].min() + 1e-6)
+            norm_df['cost'] = 1 - (norm_df['cost'] - norm_df['cost'].min()) / (norm_df['cost'].max() - norm_df['cost'].min() + 1e-6)
+            
+            fig_radar = go.Figure()
+            
+            for strategy in norm_df.index:
+                fig_radar.add_trace(go.Scatterpolar(
+                    r=[norm_df.loc[strategy, 'reward'],
+                       norm_df.loc[strategy, 'service'],
+                       norm_df.loc[strategy, 'cost']],
+                    theta=['Reward', 'Service', 'Coût (inversé)'],
+                    fill='toself',
+                    name=strategy
+                ))
+            
+            fig_radar.update_layout(
+                polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+                showlegend=True,
+                height=500
+            )
+            
+            st.plotly_chart(fig_radar, width='stretch')
         
         with tab3:
-            fig3 = px.bar(
-                x=results_df.index,
-                y=results_df['service'],
-                labels={'x': 'Stratégie', 'y': 'Service Level'},
-                title='Comparaison du Service Level',
-                color=results_df['service'],
-                color_continuous_scale='RdYlGn'
-            )
-            fig3.add_hline(y=0.95, line_dash="dash", line_color="red", 
-                          annotation_text="Cible: 95%")
-            st.plotly_chart(fig3, width='stretch')
+            st.subheader("Statistiques Détaillées")
+            
+            # Tableau complet avec stats
+            stats_data = []
+            for name, data in st.session_state.evaluation_results.items():
+                stats_data.append({
+                    'Stratégie': name,
+                    'Reward': f"{data['reward']:.2f}",
+                    'Coût Total': f"{data['cost']:.0f}",
+                    'Service Level': f"{data['service']:.2%}",
+                    'Stock Final': f"{data['stock']:.0f}"
+                })
+            
+            st.dataframe(pd.DataFrame(stats_data), width='stretch', hide_index=True)
         
-        with tab4:
-            fig4 = px.bar(
-                x=results_df.index,
-                y=results_df['stock'],
-                labels={'x': 'Stratégie', 'y': 'Stock Final'},
-                title='Comparaison du Stock Final',
-                color=results_df['stock'],
-                color_continuous_scale='Blues'
-            )
-            st.plotly_chart(fig4, width='stretch')
-        
+        # Export
         st.divider()
-        
-        # Radar chart de comparaison
-        st.subheader("Vue d'Ensemble Multi-Critères")
-        
-        # Normaliser les données pour le radar
-        normalized_df = results_df.copy()
-        normalized_df['reward'] = (normalized_df['reward'] - normalized_df['reward'].min()) / (normalized_df['reward'].max() - normalized_df['reward'].min())
-        normalized_df['cost'] = 1 - (normalized_df['cost'] - normalized_df['cost'].min()) / (normalized_df['cost'].max() - normalized_df['cost'].min())
-        
-        fig_radar = go.Figure()
-        
-        for strategy in normalized_df.index:
-            fig_radar.add_trace(go.Scatterpolar(
-                r=[normalized_df.loc[strategy, 'reward'],
-                   normalized_df.loc[strategy, 'cost'],
-                   normalized_df.loc[strategy, 'service']],
-                theta=['Reward', 'Coût (inversé)', 'Service'],
-                fill='toself',
-                name=strategy
-            ))
-        
-        fig_radar.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
-            showlegend=True,
-            title="Comparaison Multi-Critères (Normalisée)"
-        )
-        
-        st.plotly_chart(fig_radar, width='stretch')
-        
-        # Télécharger les résultats
-        st.divider()
-        st.subheader("💾 Exporter les Résultats")
-        
         csv = results_df.to_csv()
         st.download_button(
-            label="📥 Télécharger CSV",
-            data=csv,
-            file_name=f"evaluation_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-            mime="text/csv"
+            "📥 Télécharger les résultats (CSV)",
+            csv,
+            f"evaluation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            "text/csv"
         )
 
 
 # ============================
-# PAGE 6: TABLEAU DE PRODUCTION
+# PAGE 6: TABLEAU PDP
 # ============================
-elif page == "📋 Tableau de Production":
-    st.header("📋 Tableau de Production Détaillé")
+elif page == "📋 Tableau PDP":
+    st.header("📋 Plan Directeur de Production")
     
     if st.session_state.evaluation_results is None:
         st.warning("⚠️ Veuillez d'abord effectuer une évaluation")
     else:
-        st.info("💡 Tableaux de production type PDP avec toutes les métriques par période")
-        
-        # Sélectionner la stratégie à afficher
         strategies = list(st.session_state.evaluation_results.keys())
+        
         selected_strategy = st.selectbox(
             "Choisir une stratégie",
             strategies,
-            help="Sélectionnez la stratégie dont vous voulez voir le tableau détaillé"
+            format_func=lambda x: f"{'🤖' if 'PPO' in x else '📊'} {x}"
         )
         
         if selected_strategy and 'metrics' in st.session_state.evaluation_results[selected_strategy]:
             metrics = st.session_state.evaluation_results[selected_strategy]['metrics']
             
-            st.subheader(f"📊 {selected_strategy}")
+            st.subheader(f"📊 Tableau de Production - {selected_strategy}")
             
             # Créer le tableau détaillé
             df_detailed = create_detailed_production_table(
@@ -846,277 +1302,231 @@ elif page == "📋 Tableau de Production":
                 selected_strategy
             )
             
-            # Afficher avec style
-            st.dataframe(
-                df_detailed,
-                width='stretch',
-                height=600
-            )
-            
-            # Statistiques résumées
-            st.divider()
-            st.subheader("📈 Résumé de Performance")
-            
-            col1, col2, col3, col4 = st.columns(4)
-            
-            total_prod = sum([m['total_production'] for m in metrics])
-            total_demand = sum([m['raw_metrics']['current_demand'][0] for m in metrics])
-            avg_service = np.mean([m['demand_fulfillment'] for m in metrics])
-            total_cost = sum([sum(m['costs'].values()) for m in metrics])
-            
-            col1.metric("Production Totale", f"{total_prod:.0f}")
-            col2.metric("Demande Totale", f"{total_demand:.0f}")
-            col3.metric("Service Level Moyen", f"{avg_service:.2%}")
-            col4.metric("Coût Total", f"{total_cost:.0f} €")
-            
-            # Bouton d'export
-            st.divider()
-            csv = df_detailed.to_csv(index=False)
-            st.download_button(
-                label="📥 Télécharger le tableau (CSV)",
-                data=csv,
-                file_name=f"pdp_{selected_strategy}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                mime="text/csv"
-            )
-            
-            # Graphiques complémentaires
-            st.divider()
-            st.subheader("📊 Visualisations Complémentaires")
-            
-            tab1, tab2, tab3 = st.tabs(["📈 Évolution Stock", "💰 Coûts", "🎯 Service"])
-            
-            with tab1:
-                # Graphique d'évolution du stock
+            if not df_detailed.empty:
+                st.dataframe(df_detailed, width='stretch', height=600)
+                
+                # Métriques résumées
+                st.divider()
+                st.subheader("📈 Résumé")
+                
+                col1, col2, col3, col4 = st.columns(4)
+                
+                total_prod = sum([m['total_production'] for m in metrics])
+                total_demand = sum([m['raw_metrics']['current_demand'][0] for m in metrics])
+                avg_service = np.mean([m['demand_fulfillment'] for m in metrics])
+                total_cost = sum([sum(m['costs'].values()) for m in metrics])
+                
+                col1.metric("📈 Production Totale", f"{total_prod:.0f}")
+                col2.metric("📦 Demande Totale", f"{total_demand:.0f}")
+                col3.metric("🎯 Service Moyen", f"{avg_service:.1%}")
+                col4.metric("💰 Coût Total", f"{total_cost:.0f} €")
+                
+                # Graphiques
+                st.divider()
+                tab1, tab2, tab3 = st.tabs(["📈 Stock", "💰 Coûts", "🎯 Service"])
+                
                 periods = [f"P{m['period']+1}" for m in metrics]
-                stocks = [m['inventory_level'][0] for m in metrics]
-                demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
-                productions = [m['total_production'] for m in metrics]
                 
-                fig_stock = go.Figure()
-                fig_stock.add_trace(go.Scatter(
-                    x=periods, y=stocks,
-                    mode='lines+markers',
-                    name='Stock',
-                    line=dict(color='blue', width=3)
-                ))
-                fig_stock.add_hline(y=0, line_dash="dash", line_color="red", 
-                                   annotation_text="Rupture")
-                fig_stock.update_layout(
-                    title="Évolution du Stock",
-                    xaxis_title="Période",
-                    yaxis_title="Niveau de Stock",
-                    height=400
-                )
-                st.plotly_chart(fig_stock, width='stretch')
-            
-            with tab2:
-                # Graphique des coûts cumulés
-                cost_prod = [m['costs']['production_cost'] for m in metrics]
-                cost_stock = [m['costs']['inventory_cost'] for m in metrics]
-                cost_rupture = [m['costs']['shortage_cost'] for m in metrics]
+                with tab1:
+                    stocks = [m['inventory_level'][0] for m in metrics]
+                    productions = [m['total_production'] for m in metrics]
+                    demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
+                    
+                    fig = make_subplots(specs=[[{"secondary_y": True}]])
+                    
+                    fig.add_trace(
+                        go.Scatter(x=periods, y=stocks, name="Stock", 
+                                  line=dict(color='blue', width=3)),
+                        secondary_y=False
+                    )
+                    fig.add_trace(
+                        go.Bar(x=periods, y=productions, name="Production",
+                              marker_color='lightblue', opacity=0.7),
+                        secondary_y=True
+                    )
+                    fig.add_trace(
+                        go.Scatter(x=periods, y=demands, name="Demande",
+                                  line=dict(color='red', dash='dash')),
+                        secondary_y=True
+                    )
+                    
+                    fig.add_hline(y=0, line_dash="dash", line_color="red")
+                    fig.update_layout(title="Évolution du Stock et Production", height=400)
+                    st.plotly_chart(fig, width='stretch')
                 
-                fig_costs = go.Figure()
-                fig_costs.add_trace(go.Bar(
-                    x=periods, y=cost_prod,
-                    name='Production',
-                    marker_color='lightblue'
-                ))
-                fig_costs.add_trace(go.Bar(
-                    x=periods, y=cost_stock,
-                    name='Stockage',
-                    marker_color='lightgreen'
-                ))
-                fig_costs.add_trace(go.Bar(
-                    x=periods, y=cost_rupture,
-                    name='Rupture',
-                    marker_color='salmon'
-                ))
-                fig_costs.update_layout(
-                    title="Répartition des Coûts par Période",
-                    xaxis_title="Période",
-                    yaxis_title="Coût (€)",
-                    barmode='stack',
-                    height=400
-                )
-                st.plotly_chart(fig_costs, width='stretch')
-            
-            with tab3:
-                # Graphique du service level
-                service_levels = [m['demand_fulfillment'] for m in metrics]
+                with tab2:
+                    cost_prod = [m['costs']['production_cost'] for m in metrics]
+                    cost_stock = [m['costs']['inventory_cost'] for m in metrics]
+                    cost_rupture = [m['costs']['shortage_cost'] for m in metrics]
+                    
+                    fig = go.Figure()
+                    fig.add_trace(go.Bar(x=periods, y=cost_prod, name='Production', marker_color='steelblue'))
+                    fig.add_trace(go.Bar(x=periods, y=cost_stock, name='Stockage', marker_color='lightgreen'))
+                    fig.add_trace(go.Bar(x=periods, y=cost_rupture, name='Rupture', marker_color='salmon'))
+                    fig.update_layout(barmode='stack', title="Répartition des Coûts", height=400)
+                    st.plotly_chart(fig, width='stretch')
                 
-                fig_service = go.Figure()
-                fig_service.add_trace(go.Bar(
-                    x=periods, y=service_levels,
-                    name='Service Level',
-                    marker_color='green'
-                ))
-                fig_service.add_hline(
-                    y=0.95, 
-                    line_dash="dash", 
-                    line_color="red",
-                    annotation_text="Cible: 95%"
+                with tab3:
+                    service_levels = [m['demand_fulfillment'] for m in metrics]
+                    
+                    fig = go.Figure()
+                    fig.add_trace(go.Bar(
+                        x=periods, y=service_levels, name='Service',
+                        marker_color=['green' if s >= 0.95 else 'orange' if s >= 0.8 else 'red' for s in service_levels]
+                    ))
+                    fig.add_hline(y=0.95, line_dash="dash", line_color="red", annotation_text="Cible 95%")
+                    fig.update_layout(title="Niveau de Service par Période", yaxis_range=[0, 1.05], height=400)
+                    st.plotly_chart(fig, width='stretch')
+                
+                # Export
+                st.divider()
+                csv = df_detailed.to_csv(index=False)
+                st.download_button(
+                    "📥 Télécharger le tableau PDP (CSV)",
+                    csv,
+                    f"pdp_{selected_strategy}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                    "text/csv"
                 )
-                fig_service.update_layout(
-                    title="Niveau de Service par Période",
-                    xaxis_title="Période",
-                    yaxis_title="Service Level",
-                    yaxis_range=[0, 1.05],
-                    height=400
-                )
-                st.plotly_chart(fig_service, width='stretch')
-            
         else:
-            st.warning("⚠️ Pas de métriques détaillées disponibles pour cette stratégie")
-        
-        # Comparaison multi-stratégies
-        if len(strategies) > 1:
-            st.divider()
-            st.subheader("🔄 Comparaison Multi-Stratégies")
-            
-            comparison_data = []
-            for strat in strategies:
-                if 'metrics' in st.session_state.evaluation_results[strat]:
-                    metrics = st.session_state.evaluation_results[strat]['metrics']
-                    comparison_data.append({
-                        'Stratégie': strat,
-                        'Production Totale': sum([m['total_production'] for m in metrics]),
-                        'Service Moyen': np.mean([m['demand_fulfillment'] for m in metrics]),
-                        'Coût Total': sum([sum(m['costs'].values()) for m in metrics]),
-                        'Stock Final': metrics[-1]['inventory_level'][0]
-                    })
-            
-            if comparison_data:
-                df_comp = pd.DataFrame(comparison_data)
-                st.dataframe(df_comp, width='stretch')
-                
-                # Graphique de comparaison
-                fig_comp = px.bar(
-                    df_comp,
-                    x='Stratégie',
-                    y=['Production Totale', 'Coût Total'],
-                    title="Comparaison Production vs Coûts",
-                    barmode='group'
-                )
-                st.plotly_chart(fig_comp, width='stretch')
+            st.warning("⚠️ Pas de métriques disponibles pour cette stratégie")
+
 
 # ============================
 # PAGE 7: EXEMPLES RÉELS
 # ============================
 elif page == "🔬 Exemples Réels":
-    st.header("🔬 Tester sur les Exemples Réels")
+    st.header("🔬 Tester sur des Cas Réels")
     
-    example = st.selectbox(
-        "Choisir un exemple",
-        ["rouleurs", "pdp_table", "compresseurs", "usinage"]
-    )
+    col1, col2 = st.columns([1, 2])
     
-    # Charger la config de l'exemple
-    config = get_example_config(example)
+    with col1:
+        example = st.selectbox(
+            "Choisir un exemple",
+            ["rouleurs", "pdp_table", "compresseurs", "usinage"],
+            format_func=lambda x: {
+                "rouleurs": "🔧 Rouleurs",
+                "pdp_table": "📊 PDP Table",
+                "compresseurs": "⚙️ Compresseurs",
+                "usinage": "🏭 Usinage"
+            }.get(x, x)
+        )
     
-    # Afficher les détails
-    st.subheader(f"📋 Détails: {example.upper()}")
+    with col2:
+        config = get_example_config(example)
+        
+        col_a, col_b, col_c = st.columns(3)
+        col_a.metric("Horizon", f"{config.horizon} périodes")
+        col_b.metric("Produits", config.n_products)
+        col_c.metric("Cap. Totale", f"{config.regular_capacity[0] + config.overtime_capacity[0]:.0f}")
     
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Horizon", f"{config.horizon} périodes")
-    col2.metric("Produits", config.n_products)
-    col3.metric("Capacité Régulière", config.regular_capacity[0])
+    st.divider()
     
-    # Tester les stratégies baselines
-    if st.button("🧪 Tester les Stratégies Baseline"):
+    # Test rapide des baselines
+    if st.button("🧪 Tester les Stratégies Baseline", width='stretch'):
         progress = st.progress(0)
-        status = st.empty()
         
         results = {}
         strategies = list(BASELINE_STRATEGIES.keys())
         
         for i, strategy_name in enumerate(strategies):
-            status.text(f"Test de {strategy_name}...")
-            progress.progress((i + 1) / len(strategies))
+            progress.progress((i + 1) / len(strategies), text=f"Test de {strategy_name}...")
             
-            env = EnvironmentRegistry.create('strategic', config)
-            StrategyClass = BASELINE_STRATEGIES[strategy_name]
-            strategy = StrategyClass(env)
-            
-            total_reward, info = strategy.run_episode()
-            metrics = info['metrics']
-            
-            total_cost = sum(
-                m['costs']['production_cost'] + 
-                m['costs']['inventory_cost'] + 
-                m['costs']['shortage_cost']
-                for m in metrics
-            )
-            
-            results[strategy_name] = {
-                'Reward': total_reward,
-                'Coût': total_cost,
-                'Service': np.mean([m['demand_fulfillment'] for m in metrics]),
-                'Stock Final': info['final_info']['inventory_level'][0]
-            }
+            try:
+                env = EnvironmentRegistry.create('strategic', config)
+                StrategyClass = BASELINE_STRATEGIES[strategy_name]
+                strategy = StrategyClass(env)
+                
+                total_reward, info = strategy.run_episode()
+                metrics = info['metrics']
+                
+                total_cost = sum(
+                    m['costs']['production_cost'] + 
+                    m['costs']['inventory_cost'] + 
+                    m['costs']['shortage_cost']
+                    for m in metrics
+                )
+                
+                results[strategy_name] = {
+                    'Reward': round(total_reward, 2),
+                    'Coût': round(total_cost, 0),
+                    'Service': round(np.mean([m['demand_fulfillment'] for m in metrics]), 3),
+                    'Stock Final': round(info['final_info']['inventory_level'][0], 0)
+                }
+            except Exception as e:
+                results[strategy_name] = {'Erreur': str(e)}
         
-        status.text("✅ Tests terminés!")
-        progress.progress(1.0)
+        progress.progress(100, text="Terminé!")
         
-        # Afficher les résultats
-        st.divider()
-        st.subheader("📊 Résultats des Baselines")
+        st.subheader("📊 Résultats")
         
         results_df = pd.DataFrame(results).T
         st.dataframe(results_df, width='stretch')
         
         # Graphique
-        fig = px.bar(
-            results_df,
-            title=f"Comparaison des Stratégies - {example.upper()}",
-            barmode='group'
-        )
-        st.plotly_chart(fig, width='stretch')
+        if 'Reward' in results_df.columns:
+            fig = px.bar(
+                results_df.reset_index(),
+                x='index',
+                y='Reward',
+                color='Service',
+                title=f"Performance des Baselines - {example.upper()}",
+                labels={'index': 'Stratégie'},
+                color_continuous_scale='RdYlGn'
+            ) 
+            st.plotly_chart(fig, width='stretch')
     
     st.divider()
     
-    # Entraîner RL sur cet exemple
-    st.subheader("🏋️ Entraîner RL sur cet Exemple")
+    # Entraîner sur cet exemple
+    st.subheader("🏋️ Entraîner PPO sur cet Exemple")
     
     col1, col2 = st.columns(2)
     with col1:
-        timesteps_example = st.selectbox(
-            "Timesteps",
-            [30000, 50000, 100000, 200000],
-            index=1
-        )
+        timesteps_ex = st.selectbox("Timesteps", [30000, 50000, 100000, 200000], index=1)
     with col2:
-        run_name_example = st.text_input(
-            "Nom",
-            value=f"rl_{example}_{datetime.now().strftime('%Y%m%d_%H%M')}"
-        )
+        run_name_ex = st.text_input("Nom", f"ppo_{example}_{datetime.now().strftime('%Y%m%d_%H%M')}")
     
-    if st.button("🚀 Lancer l'Entraînement"):
-        with st.spinner("Entraînement en cours..."):
-            training_config = PPOTrainingConfig(
-                total_timesteps=timesteps_example,
-                model_save_path=f"./models/{run_name_example}",
-                tensorboard_log_path=f"./logs/tensorboard/{run_name_example}"
-            )
-            
-            trainer = PPOTrainer(config, training_config)
-            trainer.setup(env_name='strategic')
-            trainer.train()
-            
-            st.success(f"✅ Entraînement terminé!\n\nModèle: {training_config.model_save_path}")
+    if st.button("🚀 Lancer l'Entraînement", key="train_example"):
+        with st.spinner(f"Entraînement sur '{example}'..."):
+            try:
+                training_config = PPOTrainingConfig(
+                    total_timesteps=timesteps_ex,
+                    model_save_path=f"./models/{run_name_ex}",
+                    tensorboard_log_path=f"./logs/tensorboard/{run_name_ex}"
+                )
+                
+                trainer = PPOTrainer(config, training_config)
+                trainer.setup(env_name='strategic')
+                trainer.train()
+                
+                st.success(f"✅ Modèle entraîné: `{training_config.model_save_path}`")
+                
+                # Ajouter à la liste
+                st.session_state.trained_models.append({
+                    'name': run_name_ex,
+                    'path': training_config.model_save_path,
+                    'timesteps': timesteps_ex,
+                    'date': datetime.now().strftime('%Y-%m-%d %H:%M')
+                })
+                
+            except Exception as e:
+                st.error(f"❌ Erreur: {e}")
+
 
 # ============================
 # FOOTER
 # ============================
 st.sidebar.divider()
 st.sidebar.markdown("""
----
-### 📚 Aide
-- [Documentation](https://github.com)
-- [Guide d'utilisation](./GUIDE_EXEMPLES_REELS.md)
-- [Exemples](./README_EXEMPLES_REELS.md)
+### 📚 À propos
+**RLPlanif v2.0**  
+Optimisation PDP par Reinforcement Learning
 
-### 🛠️ Informations
-**Version:** 1.0.0  
-**Framework:** Streamlit + Stable-Baselines3  
-**Algorithme:** PPO (Proximal Policy Optimization)
+---
+**Algorithme:** PPO  
+**Framework:** Stable-Baselines3  
+**Interface:** Streamlit
+
+---
+*Projet 4AS1 - RL*
 """)

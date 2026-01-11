@@ -1,7 +1,6 @@
 # scripts/evaluate.py
 
 import argparse
-from math import inf
 import os
 import sys
 import numpy as np

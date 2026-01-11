@@ -26,6 +26,9 @@ class PPOTrainingConfig:
     log_interval: int = 10
     save_interval: int = 10000
     
+    # Early Stopping
+    early_stopping_patience: int = 5  # Nombre de vérifications sans amélioration avant arrêt
+    
     # Chemins
     model_save_path: str = "./models/"
     tensorboard_log_path: str = "./logs/tensorboard/"

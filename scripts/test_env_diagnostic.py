@@ -143,46 +143,53 @@ def test_episode_consistency():
         return True
 
 def test_normalization():
-    """Test de la normalisation"""
+    """Test de la normalisation.
+    
+    NOTE: La normalisation interne (ObservationNormalizer) est desactivee.
+    La normalisation est geree par VecNormalize dans le trainer PPO.
+    Ce test verifie que les observations brutes sont coherentes.
+    """
     print("\n" + "=" * 60)
-    print("TEST 4: NORMALISATION DES OBSERVATIONS")
+    print("TEST 4: OBSERVATIONS (VecNormalize gere la normalisation)")
     print("=" * 60)
     
-    # Sans normalisation
-    config_no_norm = PDPEnvironmentConfig(
+    # L'environnement retourne maintenant des observations brutes
+    # VecNormalize dans ppo_trainer.py s'occupe de la normalisation
+    config = PDPEnvironmentConfig(
         n_products=1,
         horizon=12,
-        normalize_observations=False
+        normalize_observations=True  # Active VecNormalize dans le trainer
     )
-    env_no_norm = EnvironmentRegistry.create('strategic', config_no_norm)
-    obs_no_norm, _ = env_no_norm.reset(seed=42)
+    env = EnvironmentRegistry.create('strategic', config)
+    obs, info = env.reset(seed=42)
     
-    print("Sans normalisation:")
-    print(f"   Stock: {obs_no_norm['current_stock']}")
-    print(f"   Demandes (min/max): {obs_no_norm['future_demands'].min():.1f} / "
-          f"{obs_no_norm['future_demands'].max():.1f}")
+    print("Observations brutes (normalisees par VecNormalize lors de l'entrainement):")
+    print(f"   Stock initial: {obs['current_stock']}")
+    print(f"   Demandes futures shape: {obs['future_demands'].shape}")
+    print(f"   Demandes (min/max): {obs['future_demands'].min():.1f} / "
+          f"{obs['future_demands'].max():.1f}")
     
-    # Avec normalisation
-    config_norm = PDPEnvironmentConfig(
-        n_products=1,
-        horizon=12,
-        normalize_observations=True
-    )
-    env_norm = EnvironmentRegistry.create('strategic', config_norm)
-    obs_norm, _ = env_norm.reset(seed=42)
+    # Verifications de coherence des observations brutes
+    stock = obs['current_stock']
+    demands = obs['future_demands']
     
-    print("\nAvec normalisation:")
-    print(f"   Stock: {obs_norm['current_stock']}")
-    print(f"   Demandes (min/max): {obs_norm['future_demands'].min():.3f} / "
-          f"{obs_norm['future_demands'].max():.3f}")
+    # Le stock doit etre dans une plage raisonnable
+    max_stock = np.array(config.max_stock)
+    stock_valid = np.all(stock >= -max_stock) and np.all(stock <= max_stock)
     
-    # Vérifications
-    if np.any(obs_norm['current_stock'] > 2) or np.any(obs_norm['current_stock'] < -2):
-        print("   ⚠️  ATTENTION: Stock normalisé hors limites!")
-        return False
-    else:
-        print("   ✅ Normalisation correcte")
+    # Les demandes doivent etre positives
+    demands_valid = np.all(demands >= 0)
+    
+    if stock_valid and demands_valid:
+        print("   ✅ Observations brutes coherentes")
+        print("   ℹ️  VecNormalize normalisera ces valeurs pendant l'entrainement")
         return True
+    else:
+        if not stock_valid:
+            print("   ⚠️  Stock hors limites!")
+        if not demands_valid:
+            print("   ⚠️  Demandes negatives detectees!")
+        return False
 
 def main():
     """Lance tous les tests"""

@@ -1,0 +1,44 @@
+[
+  {
+    "agent": "monte_carlo",
+    "error": "BaseTabularAgent.__init__() got an unexpected keyword argument 'device'"
+  },
+  {
+    "agent": "q_learning",
+    "error": "BaseTabularAgent.__init__() got an unexpected keyword argument 'device'"
+  },
+  {
+    "agent": "sarsa",
+    "error": "BaseTabularAgent.__init__() got an unexpected keyword argument 'device'"
+  },
+  {
+    "agent": "dqn",
+    "n_episodes": 500,
+    "training_time_seconds": 12.835409,
+    "final_reward_mean": 6.538513129182737,
+    "final_reward_std": 3.256250746375912,
+    "mean_reward": 7.685461262130578,
+    "std_reward": 1.0821243094329127,
+    "mean_service": 0.9956507369118223
+  },
+  {
+    "agent": "a2c",
+    "n_episodes": 500,
+    "training_time_seconds": 8.026957,
+    "final_reward_mean": -24.22218772069298,
+    "final_reward_std": 36.95091680005581,
+    "mean_reward": 3.248758689066309,
+    "std_reward": 0.18737709293043878,
+    "mean_service": 1.0
+  },
+  {
+    "agent": "sac",
+    "n_episodes": 500,
+    "training_time_seconds": 56.739216,
+    "final_reward_mean": 6.012159505522849,
+    "final_reward_std": 3.507472057448432,
+    "mean_reward": 6.349837909014639,
+    "std_reward": 0.139123676410265,
+    "mean_service": 1.0
+  }
+]

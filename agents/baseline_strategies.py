@@ -86,33 +86,45 @@ class ChaseStrategy(BaselineStrategy):
         """
         Calcule la production nécessaire pour couvrir la demande du prochain pas de temps
         et ajuste les capacités en conséquence.
+        
+        CORRIGÉ: Gère correctement les stocks négatifs et ajoute un stock de sécurité.
         """
         
         current_stock = observation['current_stock']
         # Demande du prochain pas de temps (première colonne de future_demands)
         next_demand = observation['future_demands'][:, 0]
         
-        # Production nécessaire pour couvrir la demande et maintenir le stock à zéro
-        required_production = next_demand - current_stock
-        required_production = np.maximum(required_production, 0) # Ne pas produire si stock > demande
+        # Stock de sécurité (10% de la demande)
+        safety_stock = next_demand * 0.1
+        
+        # Production nécessaire pour couvrir la demande + stock de sécurité
+        # Si stock négatif (backorder), on doit aussi le combler
+        required_production = next_demand + safety_stock - current_stock
+        required_production = np.maximum(required_production, 0)  # Ne pas produire si stock suffisant
+        
+        # Calculer la capacité totale disponible
+        total_capacity = self.regular_cap + self.overtime_cap + self.subcontracting_cap
+        
+        # Limiter la production requise à la capacité totale disponible
+        required_production = np.minimum(required_production, total_capacity)
         
         # Allocation de la production nécessaire aux différentes capacités
         
-        # 1. Capacité régulière
+        # 1. Capacité régulière (priorité)
         regular_prod = np.minimum(required_production, self.regular_cap)
-        remaining_prod = required_production - regular_prod
+        remaining_prod = np.maximum(required_production - regular_prod, 0)
         
         # 2. Heures supplémentaires
         overtime_prod = np.minimum(remaining_prod, self.overtime_cap)
-        remaining_prod -= overtime_prod
+        remaining_prod = np.maximum(remaining_prod - overtime_prod, 0)
         
-        # 3. Sous-traitance
+        # 3. Sous-traitance (dernier recours)
         subcontracting_prod = np.minimum(remaining_prod, self.subcontracting_cap)
         
-        # Conversion en ratios (l'environnement s'occupera de la validation finale)
-        regular_ratio = regular_prod / (self.regular_cap + 1e-6)
-        overtime_ratio = overtime_prod / (self.overtime_cap + 1e-6)
-        subcontracting_ratio = subcontracting_prod / (self.subcontracting_cap + 1e-6)
+        # Conversion en ratios avec clip pour éviter les valeurs > 1
+        regular_ratio = np.clip(regular_prod / (self.regular_cap + 1e-6), 0, 1)
+        overtime_ratio = np.clip(overtime_prod / (self.overtime_cap + 1e-6), 0, 1)
+        subcontracting_ratio = np.clip(subcontracting_prod / (self.subcontracting_cap + 1e-6), 0, 1)
         
         return {
             'regular': regular_ratio,

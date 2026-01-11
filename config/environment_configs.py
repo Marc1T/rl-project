@@ -12,12 +12,12 @@ class PDPEnvironmentConfig(BaseConfig):
     normalize_rewards: bool = True  # Géré par VecNormalize
     clip_actions: bool = True
     
-    # Reward shaping - POIDS RÉVISÉS pour un meilleur équilibre
+    # Reward shaping - POIDS NORMALISÉS (somme = 1 pour les coûts, bonus séparé)
     reward_weights: Dict[str, float] = field(default_factory=lambda: {
-        'production_cost': 0.4,      # Augmenté (coût principal)
-        'inventory_cost': 0.3,       # Augmenté (important)
-        'shortage_cost': 0.5,        # Augmenté (critique)
-        'service_bonus': 1.0         # Augmenté (objectif principal)
+        'production_cost': 0.25,     # 25% du poids des coûts
+        'inventory_cost': 0.25,      # 25% du poids des coûts  
+        'shortage_cost': 0.50,       # 50% du poids des coûts (critique)
+        'service_bonus': 0.5         # Bonus séparé (0-0.5 range)
     })
     
     # Observation
@@ -31,3 +31,4 @@ class PDPEnvironmentConfig(BaseConfig):
     
     # Génération de demande
     demand_file_path: Optional[str] = None
+    demand_intensity: str = "high"  # "low", "medium", "high", "extreme"

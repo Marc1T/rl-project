@@ -1,0 +1,65 @@
+[
+  {
+    "agent": "monte_carlo",
+    "n_episodes": 500,
+    "training_time_seconds": 1.120918,
+    "final_reward_mean": 3.3154825700503228,
+    "final_reward_std": 23.594794967054774,
+    "mean_reward": 8.506261949061756,
+    "std_reward": 0.5956733900798924,
+    "mean_service": 0.9974860388663004,
+    "n_states_visited": 119
+  },
+  {
+    "agent": "q_learning",
+    "n_episodes": 500,
+    "training_time_seconds": 1.08698,
+    "final_reward_mean": -4.8005629569133905,
+    "final_reward_std": 37.48988585508921,
+    "mean_reward": 8.593709532404693,
+    "std_reward": 1.0457734457511116,
+    "mean_service": 0.9964031577981138,
+    "n_states_visited": 123
+  },
+  {
+    "agent": "sarsa",
+    "n_episodes": 500,
+    "training_time_seconds": 1.068828,
+    "final_reward_mean": -4.970928561594845,
+    "final_reward_std": 37.049707638276104,
+    "mean_reward": 7.922309712470283,
+    "std_reward": 0.6965692955704158,
+    "mean_service": 0.9978679768076025,
+    "n_states_visited": 134
+  },
+  {
+    "agent": "dqn",
+    "n_episodes": 500,
+    "training_time_seconds": 12.706026,
+    "final_reward_mean": 6.619207132667284,
+    "final_reward_std": 2.958017941210886,
+    "mean_reward": 7.75808426105972,
+    "std_reward": 0.4727944727822186,
+    "mean_service": 0.9984827051230953
+  },
+  {
+    "agent": "a2c",
+    "n_episodes": 500,
+    "training_time_seconds": 7.826473,
+    "final_reward_mean": -35.81822980615957,
+    "final_reward_std": 41.93030141626595,
+    "mean_reward": 3.1204898045076845,
+    "std_reward": 0.16834568476703063,
+    "mean_service": 1.0
+  },
+  {
+    "agent": "sac",
+    "n_episodes": 500,
+    "training_time_seconds": 51.357362,
+    "final_reward_mean": 2.1196427598318643,
+    "final_reward_std": 9.11748631920523,
+    "mean_reward": 6.762092487155624,
+    "std_reward": 0.15477258858740922,
+    "mean_service": 1.0
+  }
+]

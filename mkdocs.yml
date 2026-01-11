@@ -1,0 +1,101 @@
+site_name: RLPlanif
+site_description: Optimisation du Plan Directeur de Production avec Apprentissage par Renforcement
+site_author: NANKOULI
+site_url: https://rlplanif.readthedocs.io/
+
+repo_name: RLPlanif
+repo_url: https://github.com/NANKOULI/rlplanif
+
+theme:
+  name: material
+  language: fr
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Mode sombre
+    - scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Mode clair
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search:
+      lang: fr
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/NANKOULI/rlplanif
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Accueil: index.md
+  - Guide de Démarrage:
+    - Installation: getting-started/installation.md
+    - Premier Entraînement: getting-started/quickstart.md
+    - Interface Streamlit: getting-started/streamlit.md
+  - Concepts:
+    - Plan Directeur de Production: concepts/pdp.md
+    - Apprentissage par Renforcement: concepts/reinforcement-learning.md
+    - Algorithme PPO: concepts/ppo.md
+  - Architecture:
+    - Vue d'ensemble: architecture/overview.md
+    - Environnements: architecture/environments.md
+    - Composants: architecture/components.md
+    - Agents: architecture/agents.md
+  - Guide Utilisateur:
+    - Configuration: user-guide/configuration.md
+    - Entraînement: user-guide/training.md
+    - Évaluation: user-guide/evaluation.md
+    - Stratégies Baseline: user-guide/baselines.md
+  - API Reference:
+    - Environnements: api/environments.md
+    - Composants: api/components.md
+    - Agents: api/agents.md
+    - Configuration: api/config.md
+  - Exemples:
+    - Cas Industriels: examples/industrial-cases.md
+    - Personnalisation: examples/customization.md
+  - Contribution: contributing.md
+  - Changelog: changelog.md
