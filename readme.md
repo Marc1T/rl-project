@@ -35,11 +35,7 @@ python scripts/test_env_diagnostic.py
 ### Entraînement Court (Test)
 
 ```bash
-python scripts/train.py \
-    --products 1 \
-    --timesteps 50000 \
-    --horizon 12 \
-    --env_type strategic
+python scripts/train.py --products 1 --timesteps 50000 --horizon 12 --env_type strategic
 ```
 
 **Ce qui se passe:**
@@ -53,11 +49,7 @@ python scripts/train.py \
 ### Entraînement Complet
 
 ```bash
-python scripts/train.py \
-    --products 1 \
-    --timesteps 200000 \
-    --horizon 12 \
-    --env_type strategic
+python scripts/train.py --products 1  --timesteps 200000 --horizon 12  --env_type strategic
 ```
 
 ---
@@ -81,10 +73,7 @@ Ouvrez votre navigateur: `http://localhost:6006`
 Une fois l'entraînement terminé:
 
 ```bash
-python scripts/evaluate.py \
-    --model ./models/ppo_pdp_strategic_1prod_[DATE]/best_model \
-    --episodes 10 \
-    --env_type strategic
+python scripts/evaluate.py --model ./models/ppo_pdp_strategic_1prod_[DATE]/best_model --episodes 10 --env_type strategic
 ```
 
 **Résultat attendu:**
@@ -174,31 +163,19 @@ rl-project/
 ### Multi-Produits
 
 ```bash
-python scripts/train.py \
-    --products 3 \
-    --timesteps 300000 \
-    --horizon 12 \
-    --env_type strategic
+python scripts/train.py --products 3 --timesteps 300000 --horizon 12 --env_type strategic
 ```
 
 ### Horizon Plus Long
 
 ```bash
-python scripts/train.py \
-    --products 1 \
-    --timesteps 200000 \
-    --horizon 24 \
-    --env_type strategic
+python scripts/train.py --products 1  --timesteps 200000 --horizon 24 --env_type strategic
 ```
 
 ### Environnement de Base (Plus Simple)
 
 ```bash
-python scripts/train.py \
-    --products 1 \
-    --timesteps 100000 \
-    --horizon 12 \
-    --env_type base
+python scripts/train.py --products 1  --timesteps 100000 --horizon 12 --env_type base
 ```
 
 ---
@@ -208,4 +185,3 @@ python scripts/train.py \
 - **Stable-Baselines3 Docs:** https://stable-baselines3.readthedocs.io/
 - **PPO Paper:** https://arxiv.org/abs/1707.06347
 - **RL Debugging:** https://andyljones.com/posts/rl-debugging.html
-

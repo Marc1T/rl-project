@@ -163,7 +163,6 @@ class BasePDPEnvironment(gym.Env):
         # Demande satisfaite (ce qui peut être livré)
         demand_satisfied = np.minimum(np.maximum(stock_after_prod, 0), current_demand)
         
-        # CORRECTION CRITIQUE: Stock final après livraison
         # On soustrait la demande réelle, pas la demande satisfaite
         self.current_stock = stock_after_prod - current_demand
         

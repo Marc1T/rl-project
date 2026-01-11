@@ -1,4 +1,4 @@
-# app.py - Interface Streamlit pour PDP RL
+# app.py - Interface Streamlit pour PDP RL avec tableaux détaillés
 
 import streamlit as st
 import os
@@ -74,6 +74,8 @@ if 'training_in_progress' not in st.session_state:
     st.session_state.training_in_progress = False
 if 'evaluation_results' not in st.session_state:
     st.session_state.evaluation_results = None
+if 'detailed_metrics' not in st.session_state:
+    st.session_state.detailed_metrics = None
 
 # Titre principal
 st.markdown('<p class="main-header">🏭 PDP RL Manager - Gestion Intelligente de Production</p>', 
@@ -84,8 +86,148 @@ st.sidebar.title("📋 Navigation")
 page = st.sidebar.radio(
     "Choisir une page",
     ["🏠 Accueil", "⚙️ Configuration", "🏋️ Entraînement", 
-     "📊 Évaluation", "📈 Visualisation", "🔬 Exemples Réels"]
+     "📊 Évaluation", "📈 Visualisation", "📋 Tableau de Production", "🔬 Exemples Réels"]
 )
+
+# ============================
+# FONCTION: Créer tableau de production
+# ============================
+def create_production_table(metrics: list, config) -> pd.DataFrame:
+    """
+    Crée un tableau de production détaillé comme dans les images
+    
+    Args:
+        metrics: Liste des métriques par période
+        config: Configuration de l'environnement
+    
+    Returns:
+        DataFrame formaté comme un PDP
+    """
+    n_periods = len(metrics)
+    periods = [f"Période {i+1}" for i in range(n_periods)]
+    
+    # Extraire les données
+    demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
+    
+    # Calculer les capacités disponibles
+    capacities = []
+    for i in range(n_periods):
+        regular = config.regular_capacity[0]
+        overtime = config.overtime_capacity[0]
+        total = regular + overtime
+        capacities.append(f"{regular:.0f}+{overtime:.0f}={total:.0f}")
+    
+    # Productions par type
+    prod_regular = []
+    prod_overtime = []
+    prod_subcontracting = []
+    prod_total = []
+    
+    for m in metrics:
+        raw = m['raw_metrics']
+        prod = raw['total_production']
+        prod_total.append(f"{prod:.0f}")
+        
+        # Approximation de la répartition (si disponible dans raw_metrics)
+        # Sinon, on met des valeurs vides
+        prod_regular.append("")
+        prod_overtime.append("")
+        prod_subcontracting.append("")
+    
+    # Cumul de production
+    cumul_prod = np.cumsum([float(p) for p in prod_total])
+    
+    # Stock de fin de période
+    stocks = [m['inventory_level'][0] for m in metrics]
+    
+    # Créer le DataFrame
+    df = pd.DataFrame({
+        '': ['Demande', 'Capacités', 'Production HN', 'Production HS', 
+             'Production Sous-traitée', 'Cumul Production', 'Stock fin de mois'],
+        **{periods[i]: [
+            f"{demands[i]:.0f}",
+            capacities[i],
+            prod_regular[i] if prod_regular[i] else f"{prod_total[i]}",
+            prod_overtime[i],
+            prod_subcontracting[i],
+            f"{cumul_prod[i]:.0f}",
+            f"{stocks[i]:.0f}"
+        ] for i in range(n_periods)}
+    })
+    
+    return df
+
+def create_detailed_production_table(metrics: list, config, strategy_name: str) -> pd.DataFrame:
+    """
+    Crée un tableau de production ULTRA-DÉTAILLÉ avec toutes les informations
+    """
+    n_periods = len(metrics)
+    periods = [f"Période {i+1}" for i in range(n_periods)]
+    
+    # Extraire les données
+    demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
+    stock_avant = [m['raw_metrics']['stock_before_prod'][0] for m in metrics]
+    stock_apres_prod = [m['raw_metrics']['stock_after_prod'][0] for m in metrics]
+    stock_final = [m['inventory_level'][0] for m in metrics]
+    production = [m['total_production'] for m in metrics]
+    demand_satisfied = [m['raw_metrics']['demand_satisfied'][0] for m in metrics]
+    shortage = [m['raw_metrics']['shortage'][0] for m in metrics]
+    service_level = [m['demand_fulfillment'] for m in metrics]
+    
+    # Coûts
+    cost_prod = [m['costs']['production_cost'] for m in metrics]
+    cost_stock = [m['costs']['inventory_cost'] for m in metrics]
+    cost_rupture = [m['costs']['shortage_cost'] for m in metrics]
+    cost_total = [sum(m['costs'].values()) for m in metrics]
+    
+    # Cumuls
+    cumul_prod = np.cumsum(production)
+    cumul_demand = np.cumsum(demands)
+    cumul_cost = np.cumsum(cost_total)
+    
+    # Créer le DataFrame
+    data = {
+        '📊 Indicateur': [
+            '📦 Demande',
+            '📈 Production',
+            '📊 Cumul Production',
+            '📊 Cumul Demande',
+            '🔵 Stock Début',
+            '🟢 Stock Après Prod',
+            '🔴 Stock Final',
+            '✅ Demande Satisfaite',
+            '❌ Rupture',
+            '🎯 Service Level',
+            '💰 Coût Production',
+            '💰 Coût Stockage',
+            '💰 Coût Rupture',
+            '💰 Coût Total',
+            '📈 Cumul Coûts'
+        ]
+    }
+    
+    for i in range(n_periods):
+        data[periods[i]] = [
+            f"{demands[i]:.0f}",
+            f"{production[i]:.0f}",
+            f"{cumul_prod[i]:.0f}",
+            f"{cumul_demand[i]:.0f}",
+            f"{stock_avant[i]:.0f}",
+            f"{stock_apres_prod[i]:.0f}",
+            f"{stock_final[i]:.0f}",
+            f"{demand_satisfied[i]:.0f}",
+            f"{shortage[i]:.0f}",
+            f"{service_level[i]:.2%}",
+            f"{cost_prod[i]:.0f}",
+            f"{cost_stock[i]:.0f}",
+            f"{cost_rupture[i]:.0f}",
+            f"{cost_total[i]:.0f}",
+            f"{cumul_cost[i]:.0f}"
+        ]
+    
+    df = pd.DataFrame(data)
+    
+    return df
 
 # ============================
 # PAGE 1: ACCUEIL
@@ -104,7 +246,7 @@ if page == "🏠 Accueil":
         <li>Configurez votre environnement</li>
         <li>Entraînez des modèles RL</li>
         <li>Comparez avec des baselines</li>
-        <li>Visualisez les résultats</li>
+        <li>Visualisez les résultats en tableaux détaillés</li>
         </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -117,7 +259,7 @@ if page == "🏠 Accueil":
         <li>Créez une configuration</li>
         <li>Lancez l'entraînement</li>
         <li>Évaluez les performances</li>
-        <li>Visualisez les résultats</li>
+        <li>Consultez le tableau de production</li>
         </ol>
         </div>
         """, unsafe_allow_html=True)
@@ -130,7 +272,7 @@ if page == "🏠 Accueil":
         <li>Exemples pré-configurés</li>
         <li>Stratégies baseline</li>
         <li>Comparaisons automatiques</li>
-        <li>Export des résultats</li>
+        <li>Tableaux de production PDP</li>
         </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -278,7 +420,7 @@ elif page == "⚙️ Configuration":
                 config.regular_cost[0]
             ]
         })
-        st.dataframe(config_df, use_container_width=True)
+        st.dataframe(config_df, width='stretch')
 
 # ============================
 # PAGE 3: ENTRAÎNEMENT
@@ -337,7 +479,7 @@ elif page == "🏋️ Entraînement":
         st.divider()
         
         # Bouton d'entraînement
-        if st.button("🚀 Lancer l'Entraînement", type="primary", use_container_width=True):
+        if st.button("🚀 Lancer l'Entraînement", type="primary", width='stretch'):
             st.session_state.training_in_progress = True
             
             # Créer la configuration d'entraînement
@@ -399,7 +541,7 @@ elif page == "🏋️ Entraînement":
             st.subheader("📚 Modèles Entraînés")
             
             models_df = pd.DataFrame(st.session_state.trained_models)
-            st.dataframe(models_df, use_container_width=True)
+            st.dataframe(models_df, width='stretch')
 
 # ============================
 # PAGE 4: ÉVALUATION
@@ -454,20 +596,22 @@ elif page == "📊 Évaluation":
                     
                     model = PPO.load(selected_model, env=eval_env)
                     
-                    # Collecter les résultats
+                    # Collecter les résultats AVEC métriques détaillées
                     rl_results = {
                         'rewards': [],
                         'service_levels': [],
                         'costs': [],
-                        'stocks': []
+                        'stocks': [],
+                        'detailed_metrics': []
                     }
                     
-                    for _ in range(n_episodes):
+                    for ep in range(n_episodes):
                         obs = eval_env.reset()
                         done = False
                         total_reward = 0
                         total_cost = 0
                         service_levels = []
+                        episode_metrics = []
                         
                         while not done:
                             action, _ = model.predict(obs, deterministic=True)
@@ -480,11 +624,13 @@ elif page == "📊 Évaluation":
                             total_reward += reward
                             total_cost += sum(info['costs'].values())
                             service_levels.append(info['demand_fulfillment'])
+                            episode_metrics.append(info)
                         
                         rl_results['rewards'].append(total_reward)
                         rl_results['costs'].append(total_cost)
                         rl_results['service_levels'].append(np.mean(service_levels))
                         rl_results['stocks'].append(info['inventory_level'][0])
+                        rl_results['detailed_metrics'].append(episode_metrics)
                     
                     # Stocker les résultats
                     st.session_state.evaluation_results = {
@@ -492,7 +638,8 @@ elif page == "📊 Évaluation":
                             'reward': np.mean(rl_results['rewards']),
                             'cost': np.mean(rl_results['costs']),
                             'service': np.mean(rl_results['service_levels']),
-                            'stock': np.mean(rl_results['stocks'])
+                            'stock': np.mean(rl_results['stocks']),
+                            'metrics': rl_results['detailed_metrics'][0]  # Premier épisode
                         }
                     }
                     
@@ -506,7 +653,8 @@ elif page == "📊 Évaluation":
                             baseline_results = {
                                 'rewards': [],
                                 'costs': [],
-                                'service_levels': []
+                                'service_levels': [],
+                                'all_metrics': []
                             }
                             
                             for _ in range(n_episodes):
@@ -525,12 +673,14 @@ elif page == "📊 Évaluation":
                                 baseline_results['service_levels'].append(
                                     np.mean([m['demand_fulfillment'] for m in metrics])
                                 )
+                                baseline_results['all_metrics'].append(metrics)
                             
                             st.session_state.evaluation_results[strategy_name] = {
                                 'reward': np.mean(baseline_results['rewards']),
                                 'cost': np.mean(baseline_results['costs']),
                                 'service': np.mean(baseline_results['service_levels']),
-                                'stock': 0  # Non calculé pour baselines
+                                'stock': 0,
+                                'metrics': baseline_results['all_metrics'][0]
                             }
                 
                 st.success("✅ Évaluation terminée!")
@@ -544,7 +694,7 @@ elif page == "📊 Évaluation":
                 results_df = results_df.round(2)
                 results_df.columns = ['Reward Moyen', 'Coût Total', 'Service Level', 'Stock Final']
                 
-                st.dataframe(results_df, use_container_width=True)
+                st.dataframe(results_df, width='stretch')
                 
                 # Identifier le meilleur
                 best_service = results_df['Service Level'].idxmax()
@@ -585,7 +735,7 @@ elif page == "📈 Visualisation":
                 color=results_df['reward'],
                 color_continuous_scale='RdYlGn'
             )
-            st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(fig1, width='stretch')
         
         with tab2:
             fig2 = px.bar(
@@ -596,7 +746,7 @@ elif page == "📈 Visualisation":
                 color=results_df['cost'],
                 color_continuous_scale='RdYlGn_r'
             )
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, width='stretch')
         
         with tab3:
             fig3 = px.bar(
@@ -609,7 +759,7 @@ elif page == "📈 Visualisation":
             )
             fig3.add_hline(y=0.95, line_dash="dash", line_color="red", 
                           annotation_text="Cible: 95%")
-            st.plotly_chart(fig3, use_container_width=True)
+            st.plotly_chart(fig3, width='stretch')
         
         with tab4:
             fig4 = px.bar(
@@ -620,7 +770,7 @@ elif page == "📈 Visualisation":
                 color=results_df['stock'],
                 color_continuous_scale='Blues'
             )
-            st.plotly_chart(fig4, use_container_width=True)
+            st.plotly_chart(fig4, width='stretch')
         
         st.divider()
         
@@ -650,7 +800,7 @@ elif page == "📈 Visualisation":
             title="Comparaison Multi-Critères (Normalisée)"
         )
         
-        st.plotly_chart(fig_radar, use_container_width=True)
+        st.plotly_chart(fig_radar, width='stretch')
         
         # Télécharger les résultats
         st.divider()
@@ -664,8 +814,193 @@ elif page == "📈 Visualisation":
             mime="text/csv"
         )
 
+
 # ============================
-# PAGE 6: EXEMPLES RÉELS
+# PAGE 6: TABLEAU DE PRODUCTION
+# ============================
+elif page == "📋 Tableau de Production":
+    st.header("📋 Tableau de Production Détaillé")
+    
+    if st.session_state.evaluation_results is None:
+        st.warning("⚠️ Veuillez d'abord effectuer une évaluation")
+    else:
+        st.info("💡 Tableaux de production type PDP avec toutes les métriques par période")
+        
+        # Sélectionner la stratégie à afficher
+        strategies = list(st.session_state.evaluation_results.keys())
+        selected_strategy = st.selectbox(
+            "Choisir une stratégie",
+            strategies,
+            help="Sélectionnez la stratégie dont vous voulez voir le tableau détaillé"
+        )
+        
+        if selected_strategy and 'metrics' in st.session_state.evaluation_results[selected_strategy]:
+            metrics = st.session_state.evaluation_results[selected_strategy]['metrics']
+            
+            st.subheader(f"📊 {selected_strategy}")
+            
+            # Créer le tableau détaillé
+            df_detailed = create_detailed_production_table(
+                metrics, 
+                st.session_state.current_config,
+                selected_strategy
+            )
+            
+            # Afficher avec style
+            st.dataframe(
+                df_detailed,
+                width='stretch',
+                height=600
+            )
+            
+            # Statistiques résumées
+            st.divider()
+            st.subheader("📈 Résumé de Performance")
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            total_prod = sum([m['total_production'] for m in metrics])
+            total_demand = sum([m['raw_metrics']['current_demand'][0] for m in metrics])
+            avg_service = np.mean([m['demand_fulfillment'] for m in metrics])
+            total_cost = sum([sum(m['costs'].values()) for m in metrics])
+            
+            col1.metric("Production Totale", f"{total_prod:.0f}")
+            col2.metric("Demande Totale", f"{total_demand:.0f}")
+            col3.metric("Service Level Moyen", f"{avg_service:.2%}")
+            col4.metric("Coût Total", f"{total_cost:.0f} €")
+            
+            # Bouton d'export
+            st.divider()
+            csv = df_detailed.to_csv(index=False)
+            st.download_button(
+                label="📥 Télécharger le tableau (CSV)",
+                data=csv,
+                file_name=f"pdp_{selected_strategy}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv"
+            )
+            
+            # Graphiques complémentaires
+            st.divider()
+            st.subheader("📊 Visualisations Complémentaires")
+            
+            tab1, tab2, tab3 = st.tabs(["📈 Évolution Stock", "💰 Coûts", "🎯 Service"])
+            
+            with tab1:
+                # Graphique d'évolution du stock
+                periods = [f"P{m['period']+1}" for m in metrics]
+                stocks = [m['inventory_level'][0] for m in metrics]
+                demands = [m['raw_metrics']['current_demand'][0] for m in metrics]
+                productions = [m['total_production'] for m in metrics]
+                
+                fig_stock = go.Figure()
+                fig_stock.add_trace(go.Scatter(
+                    x=periods, y=stocks,
+                    mode='lines+markers',
+                    name='Stock',
+                    line=dict(color='blue', width=3)
+                ))
+                fig_stock.add_hline(y=0, line_dash="dash", line_color="red", 
+                                   annotation_text="Rupture")
+                fig_stock.update_layout(
+                    title="Évolution du Stock",
+                    xaxis_title="Période",
+                    yaxis_title="Niveau de Stock",
+                    height=400
+                )
+                st.plotly_chart(fig_stock, width='stretch')
+            
+            with tab2:
+                # Graphique des coûts cumulés
+                cost_prod = [m['costs']['production_cost'] for m in metrics]
+                cost_stock = [m['costs']['inventory_cost'] for m in metrics]
+                cost_rupture = [m['costs']['shortage_cost'] for m in metrics]
+                
+                fig_costs = go.Figure()
+                fig_costs.add_trace(go.Bar(
+                    x=periods, y=cost_prod,
+                    name='Production',
+                    marker_color='lightblue'
+                ))
+                fig_costs.add_trace(go.Bar(
+                    x=periods, y=cost_stock,
+                    name='Stockage',
+                    marker_color='lightgreen'
+                ))
+                fig_costs.add_trace(go.Bar(
+                    x=periods, y=cost_rupture,
+                    name='Rupture',
+                    marker_color='salmon'
+                ))
+                fig_costs.update_layout(
+                    title="Répartition des Coûts par Période",
+                    xaxis_title="Période",
+                    yaxis_title="Coût (€)",
+                    barmode='stack',
+                    height=400
+                )
+                st.plotly_chart(fig_costs, width='stretch')
+            
+            with tab3:
+                # Graphique du service level
+                service_levels = [m['demand_fulfillment'] for m in metrics]
+                
+                fig_service = go.Figure()
+                fig_service.add_trace(go.Bar(
+                    x=periods, y=service_levels,
+                    name='Service Level',
+                    marker_color='green'
+                ))
+                fig_service.add_hline(
+                    y=0.95, 
+                    line_dash="dash", 
+                    line_color="red",
+                    annotation_text="Cible: 95%"
+                )
+                fig_service.update_layout(
+                    title="Niveau de Service par Période",
+                    xaxis_title="Période",
+                    yaxis_title="Service Level",
+                    yaxis_range=[0, 1.05],
+                    height=400
+                )
+                st.plotly_chart(fig_service, width='stretch')
+            
+        else:
+            st.warning("⚠️ Pas de métriques détaillées disponibles pour cette stratégie")
+        
+        # Comparaison multi-stratégies
+        if len(strategies) > 1:
+            st.divider()
+            st.subheader("🔄 Comparaison Multi-Stratégies")
+            
+            comparison_data = []
+            for strat in strategies:
+                if 'metrics' in st.session_state.evaluation_results[strat]:
+                    metrics = st.session_state.evaluation_results[strat]['metrics']
+                    comparison_data.append({
+                        'Stratégie': strat,
+                        'Production Totale': sum([m['total_production'] for m in metrics]),
+                        'Service Moyen': np.mean([m['demand_fulfillment'] for m in metrics]),
+                        'Coût Total': sum([sum(m['costs'].values()) for m in metrics]),
+                        'Stock Final': metrics[-1]['inventory_level'][0]
+                    })
+            
+            if comparison_data:
+                df_comp = pd.DataFrame(comparison_data)
+                st.dataframe(df_comp, width='stretch')
+                
+                # Graphique de comparaison
+                fig_comp = px.bar(
+                    df_comp,
+                    x='Stratégie',
+                    y=['Production Totale', 'Coût Total'],
+                    title="Comparaison Production vs Coûts",
+                    barmode='group'
+                )
+                st.plotly_chart(fig_comp, width='stretch')
+
+# ============================
+# PAGE 7: EXEMPLES RÉELS
 # ============================
 elif page == "🔬 Exemples Réels":
     st.header("🔬 Tester sur les Exemples Réels")
@@ -727,7 +1062,7 @@ elif page == "🔬 Exemples Réels":
         st.subheader("📊 Résultats des Baselines")
         
         results_df = pd.DataFrame(results).T
-        st.dataframe(results_df, use_container_width=True)
+        st.dataframe(results_df, width='stretch')
         
         # Graphique
         fig = px.bar(
@@ -735,7 +1070,7 @@ elif page == "🔬 Exemples Réels":
             title=f"Comparaison des Stratégies - {example.upper()}",
             barmode='group'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     st.divider()
     

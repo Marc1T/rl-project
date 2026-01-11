@@ -62,7 +62,6 @@ class RewardCalculator:
                                demand: np.ndarray) -> float:
         """
         Calcule le bonus pour niveau de service.
-        VERSION CORRIGÉE qui utilise le stock AVANT et l'action.
         """
         
         # Production totale

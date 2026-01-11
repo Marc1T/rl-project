@@ -1,38 +1,62 @@
 pdp_rl_project/
-├── agents/
+├── LICENSE
+├── agents
 │   ├── __init__.py
-│   ├── baseline_strategies.py  
-│   ├── ppo_trainer.py          
-│   └── rl_utils.py             
-├── components/
+│   ├── __pycache__
+│   ├── baseline_strategies.py
+│   ├── ppo_trainer.py
+│   └── rl_utils.py
+├── app.py
+├── components
 │   ├── __init__.py
-│   ├── action_validators.py    
-│   ├── constraints.py          
-│   ├── cost_calculators.py     
-│   ├── demand_generators.py   
+│   ├── __pycache__
+│   ├── action_validators.py
+│   ├── constraints.py
+│   ├── cost_calculators.py
+│   ├── demand_generators.py
 │   ├── normalizers.py
 │   ├── observation_builders.py
-│   └── reward_calculators.py   
-├── config/
+│   └── reward_calculators.py
+├── config
 │   ├── __init__.py
+│   ├── __pycache__
 │   ├── base_config.py
 │   ├── environment_configs.py
+│   ├── real_examples_configs.py
 │   └── training_configs.py
-├── environments/
+├── data
+├── environments
 │   ├── __init__.py
-│   ├── base_pdp_env.py         
+│   ├── __pycache__
+│   ├── base_pdp_env.py
 │   ├── env_registry.py
 │   └── strategic_pdp_env.py
-├── scripts/
-│   ├── __init__.py
-│   ├── compare_strategies.py   
-│   ├── evaluate.py             
-│   ├── test_env.py            
-│   ├── train.py               
-│   └── visualize_metrics.py 
-├── tests/
-│   ├── __init__.py
-│   └── test_components.py  
-├── app.py
+├── logs
+│   └── tensorboard
+├── models
+│   ├── ppo_pdp_strategic_1prod_20251124_201844
+│   ├── rl_rouleurs_strategic_20251124_234829
+│   ├── training_20251125_010203
+│   ├── training_20251125_010203.monitor.csv
+│   ├── training_20251125_010717
+│   └── training_20251125_010717.monitor.csv
+├── readme.md
+├── requirements.txt
+├── results
+│   ├── rouleurs
+│   └── usinage
+├── scripts
+│   ├── compare_strategies.py
+│   ├── evaluate.py
+│   ├── evaluate_real_example.py
+│   ├── test_env.py
+│   ├── test_env_diagnostic.py
+│   ├── test_real_examples.py
+│   ├── train.py
+│   ├── train_real_examples.py
+│   └── visualize_metrics.py
 ├── streamlit_utils.py
-└── requirements.txt           
+├── strut.txt
+├── tests
+│   └── test_components.py
+└── venv                       # on utilise conda

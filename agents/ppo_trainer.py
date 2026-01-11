@@ -23,6 +23,11 @@ class PPOTrainer:
         
     def setup(self, env_name: str = 'strategic'):
         """Configure l'environnement et le modèle"""
+
+        # Créer le répertoire AVANT de créer l'environnement
+        os.makedirs(self.training_config.model_save_path, exist_ok=True)
+        os.makedirs(self.training_config.tensorboard_log_path, exist_ok=True)
+        
         def make_env():
             env = EnvironmentRegistry.create(env_name, self.env_config)
             return Monitor(env, self.training_config.model_save_path)
@@ -85,7 +90,7 @@ class PPOTrainer:
                 log_dir=self.training_config.model_save_path, 
                 verbose=1
             ),
-            # Vous pouvez décommenter l'early stopping si nécessaire
+            # Décommenter l'early stopping si nécessaire
             # EarlyStoppingCallback(
             #     check_freq=self.training_config.save_interval * 2, 
             #     patience=5, 
